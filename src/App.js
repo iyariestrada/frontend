@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+//import "./App.css";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import VistaPrevia from "./VistaPrevia.js";
+import CompFormularioRegistro from "./FormularioRegistro.js";
+import SeleccionarTerapeuta from "./SeleccionarTerapeuta.js";
+import AgendarCita from "./AgendarCita.js";
+import LoginView from "./Login/LoginView.js";
+import AgregarUsuarios from "./Dashboard/DashComponent.js";
+import Dashboard from "./Dashboard/Dashboard.js";
+
+import Admin from "./Dashboard/layouts/Admin.js";
+import Auth from "./Dashboard/layouts/Auth.js";
+import Landing from "./Dashboard/views/Landing.js";
+import Profile from "./Dashboard/views/Profile.js";
+import Index from "./Dashboard/views/Index.js";
+
+import Settings from "./Dashboard/views/admin/Settings.js";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/vista-previa" element={<VistaPrevia />} />
+        <Route path="/agregar-registro" element={<CompFormularioRegistro />} />
+        <Route
+          path="/seleccionarterapeuta"
+          element={<SeleccionarTerapeuta />}
+        />
+        <Route path="/agendar-cita" element={<AgendarCita />} />
+        <Route path="/login-sign-in-up" element={<LoginView />} />
+        <Route path="/new-user" element={<AgregarUsuarios />} />
+
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/index" element={<Index />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
