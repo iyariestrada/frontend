@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-const Header = ({ onLogout, nombreTerapeuta }) => {
+const Header = ({
+  onLogout,
+  num_tel,
+  token,
+  user,
+  tipo_usuario,
+  nombreTerapeuta,
+}) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -11,7 +18,15 @@ const Header = ({ onLogout, nombreTerapeuta }) => {
   };
 
   const handleAgregarRegistro = () => {
-    navigate("/agregar-registro");
+    console.log("num_tel HEADER", num_tel);
+    navigate("/agregar-registro", {
+      state: {
+        num_tel: num_tel,
+        token: token,
+        user: user,
+        tipo_usuario: tipo_usuario,
+      },
+    });
   };
 
   return (
@@ -31,9 +46,12 @@ const Header = ({ onLogout, nombreTerapeuta }) => {
         )}
       </ProfileContainer>
       <ButtonGroup>
-        <ActionButton onClick={handleAgregarRegistro}>
-          Agregar Registro
-        </ActionButton>
+        {/* si es recepcionista no debe salir el boton agregar registro */}
+        {tipo_usuario !== "R" && (
+          <ActionButton onClick={handleAgregarRegistro}>
+            Agregar Registro
+          </ActionButton>
+        )}
         <LogoutButton onClick={onLogout}>Cerrar Sesión</LogoutButton>
       </ButtonGroup>
     </HeaderContainer>
@@ -100,13 +118,13 @@ const ButtonGroup = styled.div`
 const ActionButton = styled.button`
   padding: 10px 20px;
   border: none;
-  background-color: #4caf50;
+  background-color: #375d9d;
   color: white;
   cursor: pointer;
   border-radius: 5px;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #375d9d;
   }
 `;
 

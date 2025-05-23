@@ -1,34 +1,42 @@
 import React from "react";
 //import "./App.css";
-import VistaPrevia from "./VistaPrevia.js";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-/*import CompFormularioRegistro from "./FormularioRegistro.js";
-import SeleccionarTerapeuta from "./SeleccionarPerapeuta.js";
-import AgendarCita from "./AgendarCita.js";*/
+import VistaPrevia from "./VistaPrevia.js";
+import CompFormularioRegistro from "./FormularioRegistro.js";
+import SeleccionarTerapeuta from "./SeleccionarTerapeuta.js";
+import AgendarCita from "./AgendarCita.js";
 import LoginView from "./Login/LoginView.js";
+import AgregarUsuarios from "./Dashboard/DashComponent.js";
+import Dashboard from "./Dashboard/Dashboard.js";
 
-//const num_tel = "recepcionista";
-//const exp_num = 1111;
+import Admin from "./Dashboard/layouts/Admin.js";
+import Auth from "./Dashboard/layouts/Auth.js";
+import Landing from "./Dashboard/views/Landing.js";
+import Profile from "./Dashboard/views/Profile.js";
+import Index from "./Dashboard/views/Index.js";
+
+import Settings from "./Dashboard/views/admin/Settings.js";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/vista-previa" element={<VistaPrevia />} />
-        {/*<Route
-          path="/agregar-registro"
-          element={<CompFormularioRegistro num_tel={num_tel} />}
-        />
+        <Route path="/agregar-registro" element={<CompFormularioRegistro />} />
         <Route
           path="/seleccionarterapeuta"
-          element={<SeleccionarTerapeuta exp_num={exp_num} />}
+          element={<SeleccionarTerapeuta />}
         />
-        <Route
-          path="/agendar-cita"
-          element={<AgendarCita num_tel={num_tel} />}
-        />*/}
-        {/*<Route path="/login-sign-in-up" element={<LoginView />} />*/}
+        <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/login-sign-in-up" element={<LoginView />} />
+        <Route path="/new-user" element={<AgregarUsuarios />} />
+
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/index" element={<Index />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
   );

@@ -212,9 +212,30 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
 
       if (response.data.success) {
         alert("Inicio de sesión exitoso");
+
         onLogin && onLogin(response.data.user);
+
+        // Guardar el token en localStorage o sessionStorage
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            num_tel: numeroTel,
+            id: response.data.user.id_usuario,
+            nombre: response.data.user.nombre,
+            tipo: response.data.user.tipo_usuario,
+          })
+        );
+
+        console.log("Token guardado:", response.data.token);
+
         navigate("/vista-previa", {
-          state: { num_tel: numeroTel },
+          state: {
+            num_tel: numeroTel,
+            token: response.data.token,
+            user: response.data.user,
+            tipo_usuario: response.data.user.tipo_usuario,
+          },
         });
       } else {
         setErrors({ login: "Credenciales incorrectas" });

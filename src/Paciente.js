@@ -10,6 +10,8 @@ const Paciente = ({
   onVerLinea,
   onVerEstatus,
   usuario,
+  token,
+  tipo_usuario,
 }) => {
   const getStatusClass = (estatus) => {
     switch (estatus) {
@@ -82,7 +84,15 @@ const Paciente = ({
   `;
 
   const handlerAsignarCita = () => {
-    navigate("/agendar-cita", { state: { exp_num: expediente } });
+    navigate("/agendar-cita", {
+      state: {
+        exp_num: expediente,
+        token: token,
+        user: usuario,
+        num_tel: usuario.numero_tel,
+        tipo_usuario: usuario.tipo,
+      },
+    });
   };
 
   return (
@@ -102,7 +112,7 @@ const Paciente = ({
         </PatientInfo>
         <ButtonGroup>
           <Button onClick={onVerEstatus}>Ver Estatus</Button>
-          {usuario === "recepcionista" ? (
+          {usuario?.tipo === "R" ? (
             <Button onClick={handlerAsignarCita}>Asignar cita</Button>
           ) : (
             <Button onClick={onVerLinea}>Ver linea del tiempo</Button>

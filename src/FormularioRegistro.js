@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./FormularioRegistro.css";
 import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 const URI = "http://localhost:3001/expedientes";
@@ -12,7 +13,7 @@ const QCHAT_test =
 const SCQ_test =
   "https://docs.google.com/forms/d/e/1FAIpQLSfvTRcdS-ncsvY2zIhvE3x0qmlhqBQ3BeoBHoPiaWg-qHgsAw/viewform";
 
-const CompFormularioRegistro = ({ num_tel }) => {
+const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
   const [remitidoOtroHospital, setRemitidoOtroHospital] = useState(false);
   const [noNecesitaPruebas, setNoNecesitaPruebas] = useState(false);
@@ -25,9 +26,18 @@ const CompFormularioRegistro = ({ num_tel }) => {
   const [nombre, setNombre] = useState("");
   const [numero_tel, setNumeroTel] = useState("");
   const [remitido, setRemitido] = useState(false);
+
+  const [lada, setLada] = useState("52");
+
   const navigate = useNavigate();
 
-  const store = async (e) => {
+  const location = useLocation();
+  const num_tel = location.state?.num_tel;
+  const token = location.state?.token;
+  const user = location.state?.user;
+  const tipo_usuario = location.state?.tipo_usuario;
+
+  /*const store = async (e) => {
     e.preventDefault();
     const formattedDate = patientBirthdate
       ? patientBirthdate.toISOString().split("T")[0]
@@ -64,10 +74,80 @@ const CompFormularioRegistro = ({ num_tel }) => {
     alert("Formulario registrado");
     if (pasoTamizaje) {
       navigate("/seleccionarterapeuta", {
-        state: { exp_num: exp_num, num_tel },
+        state: {
+          exp_num: exp_num,
+          num_tel: num_tel,
+          token: token,
+          user: user,
+          tipo_usuario: tipo_usuario,
+        },
       });
     } else {
-      navigate("/");
+      navigate("/vista-previa", {
+        state: {
+          exp_num: exp_num,
+          num_tel: num_tel,
+          token: token,
+          user: user,
+          tipo_usuario: tipo_usuario,
+        },
+      });
+    }
+  };*/
+
+  const store = async (e) => {
+    e.preventDefault();
+    const formattedDate = patientBirthdate
+      ? patientBirthdate.toISOString().split("T")[0]
+      : null;
+
+    const numeroTelCompleto = lada + numero_tel;
+
+    try {
+      await axios.post(URI, {
+        exp_num: exp_num,
+        nombre: nombre,
+        fecha_nacimiento: formattedDate,
+        numero_tel: numeroTelCompleto,
+        remitido: remitido ? 1 : 0,
+      });
+
+      await axios.post(URI_PT, {
+        exp_num: exp_num,
+        numero_tel_terapeuta: num_tel,
+      });
+
+      await axios.post(
+        "http://localhost:3001/expedientes/pacienteestado/actual",
+        { exp_num: exp_num, tratamiento_estado: pasoTamizaje ? 1 : 2 }
+      );
+
+      alert("Formulario registrado");
+
+      if (pasoTamizaje) {
+        navigate("/seleccionarterapeuta", {
+          state: {
+            exp_num: exp_num,
+            num_tel: num_tel,
+            token: token,
+            user: user,
+            tipo_usuario: tipo_usuario,
+          },
+        });
+      } else {
+        navigate("/vista-previa", {
+          state: {
+            exp_num: exp_num,
+            num_tel: num_tel,
+            token: token,
+            user: user,
+            tipo_usuario: tipo_usuario,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error al registrar:", error);
+      alert("Error al registrar el formulario. Por favor, inténtalo de nuevo.");
     }
   };
 
@@ -103,6 +183,8 @@ const CompFormularioRegistro = ({ num_tel }) => {
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
 
+  console.log("num_tel", num_tel);
+
   return (
     <div className="formulario-page">
       <header className="header">
@@ -134,10 +216,15 @@ const CompFormularioRegistro = ({ num_tel }) => {
           <div className="form-group">
             <label htmlFor="telefonoTutor">Número telefónico del tutor:</label>
             <div className="telefono-container">
-              <select id="lada" name="lada" required>
-                <option value="+52">+52</option>
-                <option value="+1">+1</option>
-                {/* Añadir más opciones de ladas según sea necesario */}
+              <select
+                id="lada"
+                name="lada"
+                required
+                value={lada}
+                onChange={(e) => setLada(e.target.value)}>
+                <option value="52">52</option>
+                <option value="1">1</option>
+                {/* Añadir más ladas si es necesario */}
               </select>
               <input
                 value={numero_tel}

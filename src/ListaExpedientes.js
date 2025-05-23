@@ -1,8 +1,8 @@
 import React from "react";
 import Paciente from "./Paciente";
 
-const ListaExpedientes = ({ usuario, pacientes }) => {
-  console.log("Aqui esta el usuario", usuario);
+const ListaExpedientes = ({ pacientes, usuario, token, tipo_usuario }) => {
+  console.log("LISTA EXP Aqui esta el usuario", usuario);
   return (
     <main className="main">
       <h2>Pacientes Asignados</h2>
@@ -16,6 +16,8 @@ const ListaExpedientes = ({ usuario, pacientes }) => {
               tutor={paciente.numero_tel}
               estatus={paciente.estatus}
               usuario={usuario}
+              token={token}
+              tipo_usuario={tipo_usuario}
             />
           ))
         ) : (

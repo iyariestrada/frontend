@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
-const Filtrado = ({ pacientes, onFilteredPatients, numero_tel }) => {
+const Filtrado = ({
+  pacientes,
+  onFilteredPatients,
+  numero_tel,
+  token,
+  tipo_usuario,
+}) => {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [sortKey, setSortKey] = useState("");
@@ -11,7 +17,15 @@ const Filtrado = ({ pacientes, onFilteredPatients, numero_tel }) => {
   const [maxAge, setMaxAge] = useState({ years: "", months: "" });
   const [estadoPacientes, setEstadoPacientes] = useState([]);
 
-  const URI = `http://localhost:3001/expedientes/estadopacientes/${numero_tel}`;
+  //axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+  let URI;
+
+  if (tipo_usuario === "R") {
+    URI = `http://localhost:3001/expedientes/estadopacientes/todos`;
+  } else {
+    URI = `http://localhost:3001/expedientes/estadopacientes/${numero_tel}`;
+  }
 
   let filters = [
     "Pendiente de asignar cita",

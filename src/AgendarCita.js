@@ -15,7 +15,14 @@ const AgendarCita = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { exp_num } = location.state || {};
+
+  const exp_num = location.state?.exp_num;
+  const numero_tel = location.state?.numero_tel; // USUARIO ACTUAL
+  const token = location.state?.token;
+  const user = location.state?.user;
+  const tipo_usuario = location.state?.tipo_usuario;
+
+  console.log("AGENDAR ACTUAL USER", user);
 
   useEffect(() => {
     const fetchPacientes = async () => {
@@ -27,14 +34,14 @@ const AgendarCita = () => {
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
-        if (cita.numero_tel_terapeuta === "NA") {
+        if (cita.numero_tel_terapeuta === null) {
           const respuesta = await axios.get(
-            "http://localhost:3001/expedientes/terapeutas/A"
+            "http://localhost:3001/expedientes/usuarios/tipo/A"
           );
-          setTherapists(respuesta.data);
+          setTherapists(respuesta.data.usuarios);
         } else if (cita.numero_tel_terapeuta) {
           const respuesta = await axios.get(
-            `http://localhost:3001/expedientes/terapeuta/${cita.numero_tel_terapeuta}`
+            `http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
           );
           setTherapists([respuesta.data]);
         } else {
@@ -56,6 +63,10 @@ const AgendarCita = () => {
           const response = await axios.get(
             `http://localhost:3001/expedientes/citas/${selectedTherapist}`
           );
+
+          console.log("Citas Terapeuta:", selectedTherapist);
+
+          console.log("Citas del terapeuta:", response.data);
 
           const citasDelDia = response.data.filter(
             (cita) => cita.fecha === formattedDate
@@ -96,9 +107,12 @@ const AgendarCita = () => {
       return;
     }
 
+    // pasar selectedTherapist a string
+    const selectedTherapistString = String(selectedTherapist);
+
     const payload = {
       exp_num,
-      numero_tel_terapeuta: selectedTherapist,
+      numero_tel_terapeuta: selectedTherapistString,
       fecha: formattedDate,
       hora: selectedTime,
     };
@@ -109,7 +123,14 @@ const AgendarCita = () => {
         payload
       );
       alert("Cita agendada con éxito.");
-      navigate("/");
+      navigate("/vista-previa", {
+        state: {
+          numero_tel,
+          token,
+          user,
+          tipo_usuario,
+        },
+      });
     } catch (error) {
       console.error("Error agendando la cita:", error);
       alert("Hubo un problema al agendar la cita. Intenta nuevamente.");
