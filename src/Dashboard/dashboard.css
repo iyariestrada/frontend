@@ -199,7 +199,6 @@
   color: #721c24;
 }
 
-/* Scrollbar para el contenedor de la lista de especialidades */
 .specialties-list {
   max-height: 150px;
   overflow-y: auto;

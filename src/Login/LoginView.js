@@ -229,14 +229,26 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
 
         console.log("Token guardado:", response.data.token);
 
-        navigate("/vista-previa", {
-          state: {
-            num_tel: numeroTel,
-            token: response.data.token,
-            user: response.data.user,
-            tipo_usuario: response.data.user.tipo_usuario,
-          },
-        });
+        // Redirección según tipo de usuario
+        if (response.data.user.tipo === "ADM") {
+          navigate("/admin", {
+            state: {
+              num_tel: numeroTel,
+              token: response.data.token,
+              user: response.data.user,
+              tipo_usuario: response.data.user.tipo_usuario,
+            },
+          });
+        } else {
+          navigate("/vista-previa", {
+            state: {
+              num_tel: numeroTel,
+              token: response.data.token,
+              user: response.data.user,
+              tipo_usuario: response.data.user.tipo_usuario_usuario,
+            },
+          });
+        }
       } else {
         setErrors({ login: "Credenciales incorrectas" });
       }
