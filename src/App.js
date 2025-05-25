@@ -6,22 +6,26 @@ import CompFormularioRegistro from "./FormularioRegistro.js";
 import SeleccionarTerapeuta from "./SeleccionarTerapeuta.js";
 import AgendarCita from "./AgendarCita.js";
 import LoginView from "./Login/LoginView.js";
-import AgregarUsuarios from "./Dashboard/DashComponent.js";
-import Dashboard from "./Dashboard/Dashboard.js";
 
 import Admin from "./Dashboard/layouts/Admin.js";
-import Auth from "./Dashboard/layouts/Auth.js";
-import Landing from "./Dashboard/views/Landing.js";
-import Profile from "./Dashboard/views/Profile.js";
-import Index from "./Dashboard/views/Index.js";
 
-import Settings from "./Dashboard/views/admin/Settings.js";
+import Settings from "./Dashboard/components/Cards/CardSettings.js";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/vista-previa" element={<VistaPrevia />} />
+        <Route
+          path="/ajustes"
+          element={
+            <div className="flex items-center justify-center min-h-screen ">
+              <div className="w-9/12 max-w-xl">
+                <Settings />
+              </div>
+            </div>
+          }
+        />
         <Route path="/agregar-registro" element={<CompFormularioRegistro />} />
         <Route
           path="/seleccionarterapeuta"
@@ -29,14 +33,8 @@ function App() {
         />
         <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/login-sign-in-up" element={<LoginView />} />
-        <Route path="/new-user" element={<AgregarUsuarios />} />
 
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/landing" element={<Landing />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/index" element={<Index />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/admin/*" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );

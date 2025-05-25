@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPopper } from "@popperjs/core";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const IndexDropdown = () => {
   // dropdown props
@@ -16,6 +17,14 @@ const IndexDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [user] = useState(
+    location.state?.user || JSON.parse(localStorage.getItem("user"))
+  );
+
   return (
     <>
       <a

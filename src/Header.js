@@ -17,6 +17,22 @@ const Header = ({
     setMenuOpen(!menuOpen);
   };
 
+  const handleAjustes = () => {
+    console.log("AJUSTES DE USUARIO", user.nombreTerapeuta);
+    setMenuOpen(false);
+    navigate("/ajustes", {
+      state: {
+        num_tel: num_tel,
+        token: token,
+        user: user,
+        tipo_usuario: tipo_usuario,
+        fromHeader: true,
+      },
+    });
+    localStorage.setItem("user", JSON.stringify(user));
+    console.log("user", user);
+  };
+
   const handleAgregarRegistro = () => {
     console.log("num_tel HEADER", num_tel);
     navigate("/agregar-registro", {
@@ -42,6 +58,7 @@ const Header = ({
         {menuOpen && (
           <DropdownMenu>
             <MenuItem>Ver horario</MenuItem>
+            <MenuItem onClick={handleAjustes}>Ajustes</MenuItem>
           </DropdownMenu>
         )}
       </ProfileContainer>
