@@ -9,20 +9,33 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-
-// components
-import TableDropdown from "../../components/Dropdowns/TableDropdown.js";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 
 const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  zIndex: 1300,
+};
+
+const modalContentStyle = {
+  backgroundColor: "background.paper",
   boxShadow: 24,
-  p: 4,
-  borderRadius: 2,
+  padding: "2rem",
+  borderRadius: "8px",
+  width: "100%",
+  maxWidth: "450px",
+  maxHeight: "90vh",
+  overflowY: "auto",
+  margin: "1rem",
+  border: "none",
 };
 
 export default function CardTable({
@@ -37,6 +50,31 @@ export default function CardTable({
   const [editedNumber, setEditedNumber] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [numberError, setNumberError] = useState("");
+
+  const validateNumber = (number) => {
+    if (!number) {
+      return "El número no puede estar vacío";
+    }
+    if (!/^\d+$/.test(number)) {
+      return "Solo se permiten números";
+    }
+    if (number.length < 10) {
+      return "El número debe tener al menos 10 dígitos";
+    }
+    return "";
+  };
+
+  const handleNumberChange = (e) => {
+    const value = e.target.value;
+    setEditedNumber(value);
+    setNumberError(validateNumber(value));
+  };
 
   const getUserType = (tipo) => {
     switch (tipo) {
@@ -66,6 +104,7 @@ export default function CardTable({
   const handleOpenEditModal = (user) => {
     setCurrentUser(user);
     setEditedNumber(user.number);
+    setNumberError("");
     setEditModalOpen(true);
   };
 
@@ -73,6 +112,7 @@ export default function CardTable({
     setEditModalOpen(false);
     setCurrentUser(null);
     setEditedNumber("");
+    setNumberError("");
   };
 
   const handleOpenDeleteModal = (user) => {
@@ -85,10 +125,18 @@ export default function CardTable({
     setCurrentUser(null);
   };
 
-  const handleUpdateNumber = async () => {
-    if (!currentUser || !editedNumber) return;
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
 
-    console.log("Updating user number:", currentUser.number, editedNumber);
+  const handleUpdateNumber = async () => {
+    const error = validateNumber(editedNumber);
+    if (error) {
+      setNumberError(error);
+      return;
+    }
+
+    if (!currentUser || !editedNumber) return;
 
     setIsUpdating(true);
     try {
@@ -99,9 +147,34 @@ export default function CardTable({
           nuevo_numero: editedNumber,
         }
       );
+
+      setAlert({
+        open: true,
+        message: "Número actualizado correctamente",
+        severity: "success",
+      });
+
+      onUserUpdate(currentUser.id, { ...currentUser, number: editedNumber });
       handleCloseEditModal();
     } catch (error) {
       console.error("Error updating user number:", error);
+
+      let errorMessage = "Error al actualizar el número";
+      if (error.response) {
+        if (error.response.status === 400) {
+          errorMessage = error.response.data.message || "Datos inválidos";
+        } else if (error.response.status === 404) {
+          errorMessage = "Usuario no encontrado";
+        } else if (error.response.status === 409) {
+          errorMessage = "El nuevo número ya está en uso";
+        }
+      }
+
+      setAlert({
+        open: true,
+        message: errorMessage,
+        severity: "error",
+      });
     } finally {
       setIsUpdating(false);
     }
@@ -110,12 +183,29 @@ export default function CardTable({
   const handleDeleteUser = async () => {
     if (!currentUser) return;
 
+    console.log("Eliminando usuario:", currentUser.number);
+
     setIsDeleting(true);
     try {
-      await onUserDelete(currentUser.id);
+      // Llama a la API DELETE
+      await axios.delete(
+        `http://localhost:3001/expedientes/usuarios/${currentUser.number}`
+      );
+
+      setAlert({
+        open: true,
+        message: "Usuario eliminado correctamente",
+        severity: "success",
+      });
       handleCloseDeleteModal();
     } catch (error) {
       console.error("Error deleting user:", error);
+      setAlert({
+        open: true,
+        message:
+          error.response?.data?.message || "Error al eliminar el usuario F",
+        severity: "error",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -260,60 +350,162 @@ export default function CardTable({
         open={editModalOpen}
         onClose={handleCloseEditModal}
         aria-labelledby="edit-number-modal"
-        aria-describedby="modal-to-edit-user-number">
-        <Box sx={modalStyle}>
-          <Typography variant="h6" component="h2" gutterBottom>
+        aria-describedby="modal-to-edit-user-number"
+        sx={modalStyle}>
+        <Box sx={modalContentStyle}>
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            sx={{ fontWeight: "bold", mb: 3 }}>
             Editar número de {currentUser?.name}
           </Typography>
+
           <TextField
             fullWidth
             margin="normal"
-            label="Número"
+            label="Número de teléfono"
             value={editedNumber}
-            onChange={(e) => setEditedNumber(e.target.value)}
+            onChange={handleNumberChange}
+            error={!!numberError}
+            helperText={numberError}
+            inputProps={{
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+              maxLength: 15,
+            }}
+            sx={{
+              mb: 2,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
+
           <Box
-            sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={handleCloseEditModal}>Cancelar</Button>
+            sx={{
+              mt: 3,
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 2,
+            }}>
+            <Button
+              onClick={handleCloseEditModal}
+              variant="outlined"
+              sx={{
+                px: 3,
+                py: 1,
+                borderRadius: "8px",
+                textTransform: "none",
+                fontWeight: "bold",
+              }}>
+              Cancelar
+            </Button>
             <Button
               variant="contained"
               onClick={handleUpdateNumber}
-              disabled={isUpdating}>
-              {isUpdating ? "Guardando..." : "Guardar"}
+              disabled={isUpdating || !!numberError}
+              sx={{
+                px: 3,
+                py: 1,
+                borderRadius: "8px",
+                textTransform: "none",
+                fontWeight: "bold",
+                backgroundColor: "#3b82f6",
+                "&:hover": {
+                  backgroundColor: "#2563eb",
+                },
+                "&:disabled": {
+                  backgroundColor: "#e5e7eb",
+                  color: "#9ca3af",
+                },
+              }}>
+              {isUpdating ? "Guardando..." : "Guardar cambios"}
             </Button>
           </Box>
         </Box>
       </Modal>
 
-      {/* Modal para confirmar eliminación */}
+      {/* Modal para confirmar eliminación - Estilo mejorado */}
       <Modal
         open={deleteModalOpen}
         onClose={handleCloseDeleteModal}
         aria-labelledby="delete-user-modal"
-        aria-describedby="modal-to-confirm-user-deletion">
-        <Box sx={modalStyle}>
-          <Typography variant="h6" component="h2" gutterBottom>
+        aria-describedby="modal-to-confirm-user-deletion"
+        sx={modalStyle}>
+        <Box sx={modalContentStyle}>
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            sx={{ fontWeight: "bold" }}>
             Confirmar eliminación
           </Typography>
-          <Typography sx={{ mt: 2 }}>
+          <Typography sx={{ mt: 2, mb: 1 }}>
             ¿Estás seguro que deseas eliminar a {currentUser?.name}?
           </Typography>
-          <Typography sx={{ mt: 1, mb: 2, color: "error.main" }}>
+          <Typography sx={{ mb: 3, color: "error.main", fontSize: "0.875rem" }}>
             Esta acción es permanente. Las citas sin atender deberán ser
             reagendadas.
           </Typography>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={handleCloseDeleteModal}>Cancelar</Button>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 2,
+            }}>
+            <Button
+              onClick={handleCloseDeleteModal}
+              variant="outlined"
+              sx={{
+                px: 3,
+                py: 1,
+                borderRadius: "8px",
+                textTransform: "none",
+                fontWeight: "bold",
+              }}>
+              Cancelar
+            </Button>
             <Button
               variant="contained"
               color="error"
               onClick={handleDeleteUser}
-              disabled={isDeleting}>
-              {isDeleting ? "Eliminando..." : "Confirmar"}
+              disabled={isDeleting}
+              sx={{
+                px: 3,
+                py: 1,
+                borderRadius: "8px",
+                textTransform: "none",
+                fontWeight: "bold",
+                "&:disabled": {
+                  backgroundColor: "#e5e7eb",
+                  color: "#9ca3af",
+                },
+              }}>
+              {isDeleting ? "Eliminando..." : "Eliminar"}
             </Button>
           </Box>
         </Box>
       </Modal>
+
+      {/* Snackbar para mostrar alertas */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <Alert
+          onClose={handleCloseAlert}
+          severity={alert.severity}
+          sx={{
+            width: "100%",
+            borderRadius: "8px",
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          }}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

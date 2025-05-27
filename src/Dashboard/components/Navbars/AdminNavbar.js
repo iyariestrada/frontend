@@ -19,9 +19,6 @@ export default function Navbar() {
       return;
     }
 
-    // Configurar axios para enviar el token en las peticiones
-    //axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
     // Cierre de sesión por inactividad
     const handleInactivity = () => {
       localStorage.removeItem("token");
