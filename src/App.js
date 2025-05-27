@@ -5,7 +5,9 @@ import VistaPrevia from "./VistaPrevia.js";
 import CompFormularioRegistro from "./FormularioRegistro.js";
 import SeleccionarTerapeuta from "./SeleccionarTerapeuta.js";
 import AgendarCita from "./AgendarCita.js";
+
 import LoginView from "./Login/LoginView.js";
+import ForgotPassword from "./Login/ForgotPassword.js";
 
 import Admin from "./Dashboard/layouts/Admin.js";
 
@@ -33,6 +35,7 @@ function App() {
         />
         <Route path="/agendar-cita" element={<AgendarCita />} />
         <Route path="/login-sign-in-up" element={<LoginView />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/admin/*" element={<Admin />} />
       </Routes>

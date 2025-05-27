@@ -3,6 +3,7 @@ import logo from "../public/LogoOficial_HIC_horizontal.png";
 import "./loginview.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const LoginView = ({ onLogin, showForgotPassword = true }) => {
   const [activeTab, setActiveTab] = useState("login");
@@ -341,11 +342,21 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
               />
             </div>
 
-            <div className="loginview-form-options">
+            {/*<div className="loginview-form-options">
               {showForgotPassword && (
                 <a href="#!" className="loginview-forgot-password">
                   ¿Olvidaste tu contraseña?
                 </a>
+              )}
+            </div>*/}
+
+            <div className="loginview-form-options">
+              {showForgotPassword && (
+                <Link
+                  to="/forgot-password"
+                  className="loginview-forgot-password">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               )}
             </div>
 

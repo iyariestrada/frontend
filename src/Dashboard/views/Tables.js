@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 // components
-import CardTable from "../../components/Cards/CardTable.js";
+import CardTable from "../components/Cards/CardTable.js";
 
 export default function Tables() {
   const [usuarios, setUsuarios] = useState([]);

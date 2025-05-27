@@ -9,10 +9,9 @@ import HeaderStats from "../components/Headers/HeaderStats.js";
 
 // views
 
-import Dashboard from "../views/admin/Dashboard.js";
-import Settings from "../views/admin/Settings.js";
-import Tables from "../views/admin/Tables.js";
-import NewUser from "../AltaUsuarios.js";
+import Settings from "../views/Settings.js";
+import Tables from "../views/Tables.js";
+import NewUser from "../views/AltaUsuarios.js";
 
 import "../assets/styles/tailwind.css";
 
@@ -26,7 +25,6 @@ export default function Admin() {
         <HeaderStats />
         <div className="px-4 md:px-10 mx-auto w-full -m-24">
           <Routes>
-            <Route path="dashboard" element={<Dashboard />} />
             <Route path="settings" element={<Settings />} />
             <Route path="tables" element={<Tables />} />
             <Route path="new-user" element={<NewUser />} />
