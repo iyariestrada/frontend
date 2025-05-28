@@ -250,12 +250,14 @@ const CompFormularioRegistro = () => {
               <label htmlFor="expediente">Número de expediente:</label>
               <input
                 value={exp_num}
-                onChange={(e) => setExpNum(e.target.value)}
-                type="text"
+                onChange={(e) => setExpNum(e.target.value.replace(/\D/, ""))} // Solo números
+                type="number"
                 placeholder="Número de expediente"
                 id="expediente"
                 name="expediente"
                 required
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </div>
           </div>

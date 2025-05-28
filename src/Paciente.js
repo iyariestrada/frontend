@@ -156,8 +156,8 @@ const InfoAndButtons = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 30px; // Agrega un gap mayor si lo deseas
 `;
-
 const PatientInfo = styled.div`
   flex: 1;
   display: flex;
