@@ -182,17 +182,28 @@ const Filtrado = ({
       <CheckboxGroup>
         <label>Filtrar por estado del paciente:</label>
         {filters.map((category, idx) => (
-          <div key={`filters-${idx}`}>
+          <CheckboxRow key={`filters-${idx}`}>
             <input
-              type="checkbox"
-              onChange={() => handleCheckboxChange(category)}
-              checked={selectedFilters.includes(category)}
+              type="radio"
+              name="estadoPaciente"
+              value={category}
+              checked={selectedFilters[0] === category}
+              onChange={() => setSelectedFilters([category])}
             />
-            <label>{category}</label>
-          </div>
+            <label style={{ margin: 0 }}>{category}</label>
+          </CheckboxRow>
         ))}
+        <CheckboxRow>
+          <input
+            type="radio"
+            name="estadoPaciente"
+            value=""
+            checked={selectedFilters.length === 0}
+            onChange={() => setSelectedFilters([])}
+          />
+          <label style={{ margin: 0 }}>Todos</label>
+        </CheckboxRow>
       </CheckboxGroup>
-
       <Sort>
         <label>Ordenar por:</label>
         <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
@@ -264,11 +275,24 @@ const Title = styled.h2`
   margin-bottom: 1rem;
   color: #333;
 `;
+const CheckboxRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    margin: 0;
+    font-weight: normal;
+    display: inline;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+`;
 
 const CheckboxGroup = styled.div`
   margin-bottom: 1rem;
 
-  label {
+  > label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
@@ -277,9 +301,9 @@ const CheckboxGroup = styled.div`
 
   input[type="checkbox"] {
     margin-right: 0.5rem;
+    vertical-align: middle;
   }
 `;
-
 const Sort = styled.div`
   margin-bottom: 1rem;
 
