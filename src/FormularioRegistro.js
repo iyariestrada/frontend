@@ -86,7 +86,7 @@ const CompFormularioRegistro = () => {
         },
       });
     } else {
-      navigate("/", {
+      navigate("/vista-previa", {
         state: {
           exp_num: exp_num,
           user.num_tel: user.num_tel,
@@ -136,15 +136,7 @@ const CompFormularioRegistro = () => {
           },
         });
       } else {
-        navigate("/", {
-          state: {
-            exp_num: exp_num,
-            num_tel: user.num_tel,
-            token: token,
-            user: user,
-            tipo_usuario: user.tipo,
-          },
-        });
+        navigate("/");
       }
     } catch (error) {
       console.error("Error al registrar:", error);

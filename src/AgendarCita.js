@@ -70,16 +70,20 @@ const AgendarCita = () => {
             (cita) => cita.fecha === formattedDate
           );
           const bookedSlots = citasDelDia.map((cita) => cita.hora);
-
+          
           const allSlots = Array.from(
             { length: 10 },
-            (_, i) => `${8 + i}:00:00`
+            (_, i) => `${String(8 + i).padStart(2, "0")}:00:00`
+          );
+
+          const bookedSlotsNormalized = bookedSlots.map(
+            slot => slot.length === 7 ? `0${slot}` : slot
           );
 
           const availableSlots = allSlots.filter(
-            (slot) => !bookedSlots.includes(slot)
+            (slot) => !bookedSlotsNormalized.includes(slot)
           );
-
+          
           setTimeSlots(availableSlots);
         } catch (error) {
           console.error("Error al obtener horarios:", error);
