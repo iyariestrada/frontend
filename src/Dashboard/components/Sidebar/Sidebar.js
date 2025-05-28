@@ -1,12 +1,44 @@
 /*eslint-disable*/
-import React from "react";
-import { Link } from "react-router-dom";
-
-import NotificationDropdown from "../Dropdowns/NotificationDropdown.js";
-import UserDropdown from "../Dropdowns/UserDropdown.js";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [token] = useState(
+    location.state?.token || localStorage.getItem("token")
+  );
+  const [user] = useState(
+    location.state?.user || JSON.parse(localStorage.getItem("user"))
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login-sign-in-up");
+  };
+
+  const AnimatedButton = styled(Button)({
+    transition: "all 0.3s ease-in-out",
+    backgroundColor: "transparent",
+    color: "blue",
+    border: "2px solid blue",
+    fontWeight: "bold",
+    width: "fit-content",
+    alignSelf: "center",
+    "&:hover": {
+      backgroundColor: "red",
+      color: "white",
+    },
+    "&:active": {
+      transform: "scale(0.95)",
+    },
+  });
+
   return (
     <>
       <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -26,15 +58,6 @@ export default function Sidebar() {
               src={require("../../../public/LogoOficial_HIC_horizontal.png")}
             />
           </div>
-          {/* User */}
-          <ul className="md:hidden items-center flex flex-wrap list-none">
-            <li className="inline-block relative">
-              <NotificationDropdown />
-            </li>
-            <li className="inline-block relative">
-              <UserDropdown />
-            </li>
-          </ul>
           {/* Collapse */}
           <div
             className={
@@ -59,16 +82,6 @@ export default function Sidebar() {
                 </div>
               </div>
             </div>
-            {/* Form */}
-            <form className="mt-6 mb-4 md:hidden">
-              <div className="mb-3 pt-0">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="border-0 px-3 py-2 h-12 border border-solid  border-blueGray-500 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base leading-snug shadow-none outline-none focus:outline-none w-full font-normal"
-                />
-              </div>
-            </form>
 
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
@@ -83,7 +96,7 @@ export default function Sidebar() {
                 <Link
                   className={
                     "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin") !== -1
+                    (location.pathname.indexOf("/admin") !== -1
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
@@ -91,9 +104,9 @@ export default function Sidebar() {
                   <i
                     className={
                       "fas fa-tv mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin") !== -1
+                      (location.pathname.indexOf("/admin") !== -1
                         ? "opacity-75"
-                        : "text-blueGray-300")
+                        : "text-blueGray-400")
                     }></i>{" "}
                   Dashboard
                 </Link>
@@ -102,8 +115,8 @@ export default function Sidebar() {
               <li className="items-center">
                 <Link
                   className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/settings") !== -1
+                    "flex items-center text-xs uppercase py-3 font-bold block " +
+                    (location.pathname.indexOf("/admin/settings") !== -1
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
@@ -111,31 +124,11 @@ export default function Sidebar() {
                   <i
                     className={
                       "fas fa-tools mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
+                      (location.pathname.indexOf("/admin/settings") !== -1
                         ? "opacity-75"
-                        : "text-blueGray-300")
+                        : "text-blueGray-400")
                     }></i>{" "}
                   Ajustes
-                </Link>
-              </li>
-
-              <li className="items-center">
-                <Link
-                  className={
-                    "text-xs uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/tables") !== -1
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
-                  to="/admin/tables">
-                  <i
-                    className={
-                      "fas fa-table mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/tables") !== -1
-                        ? "opacity-75"
-                        : "text-blueGray-300")
-                    }></i>{" "}
-                  Tables
                 </Link>
               </li>
             </ul>
@@ -148,21 +141,43 @@ export default function Sidebar() {
             </h6>
             {/* Navigation */}
 
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+            <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="items-center">
                 <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/auth/login">
-                  <i className="fas fa-fingerprint text-blueGray-400 mr-2 text-sm"></i>{" "}
+                  className={
+                    "flex items-center text-xs uppercase py-3 font-bold block " +
+                    (location.pathname.indexOf("/admin/tables") !== -1
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/admin/tables">
+                  <i
+                    className={
+                      "fas fa-users mr-2 text-sm " +
+                      (location.pathname.indexOf("/admin/tables") !== -1
+                        ? "opacity-75"
+                        : "text-blueGray-400")
+                    }></i>
                   Usuarios
                 </Link>
               </li>
 
               <li className="items-center">
                 <Link
-                  className="text-blueGray-700 hover:text-blueGray-500 text-xs uppercase py-3 font-bold block"
-                  to="/new-user">
-                  <i className="fas fa-clipboard-list text-blueGray-300 mr-2 text-sm"></i>{" "}
+                  className={
+                    "flex items-center text-xs uppercase py-3 font-bold block " +
+                    (location.pathname === "/admin/new-user"
+                      ? "text-lightBlue-500 bg-blue-100 rounded-lg"
+                      : "text-blueGray-700 hover:text-lightBlue-500")
+                  }
+                  to="/admin/new-user">
+                  <i
+                    className={
+                      "fas fa-user-plus mr-2 text-sm " +
+                      (location.pathname.indexOf("/admin/tables") !== -1
+                        ? "opacity-75"
+                        : "text-blueGray-400")
+                    }></i>
                   Nuevo registro
                 </Link>
               </li>
@@ -175,13 +190,13 @@ export default function Sidebar() {
               Documentación
             </h6>
             {/* Navigation */}
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+            <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="inline-flex">
                 <a
                   href=""
                   target="_blank"
                   className="text-blueGray-700 hover:text-blueGray-500 text-sm block mb-4 no-underline font-semibold">
-                  <i className="fas fa-paint-brush mr-2 text-blueGray-300 text-base"></i>
+                  <i className="fas fa-book mr-2 text-blueGray-400 text-base"></i>
                   Manual de usuario
                 </a>
               </li>
@@ -191,21 +206,27 @@ export default function Sidebar() {
                   href=""
                   target="_blank"
                   className="text-blueGray-700 hover:text-blueGray-500 text-sm block mb-4 no-underline font-semibold">
-                  <i className="fab fa-css3-alt mr-2 text-blueGray-300 text-base"></i>
+                  <i className="fas fa-file-code mr-2 text-blueGray-400 text-base"></i>
                   Documentación Expedientes
                 </a>
               </li>
 
               <li className="inline-flex">
                 <a
-                  href=""
+                  href="https://docs.google.com/document/d/1tc99Fa6b1d7vU4W2Q6aLPolYete8amP2107ne-vey-M/edit?tab=t.0"
                   target="_blank"
                   className="text-blueGray-700 hover:text-blueGray-500 text-sm block mb-4 no-underline font-semibold">
-                  <i className="fab fa-angular mr-2 text-blueGray-300 text-base"></i>
+                  <i className="fas fa-network-wired mr-2 text-blueGray-400 text-base"></i>
                   Documentación de API
                 </a>
               </li>
             </ul>
+
+            {/* Divider */}
+            <hr className="my-4 md:min-w-full" />
+            <AnimatedButton variant="outlined" onClick={handleLogout}>
+              Cerrar sesión
+            </AnimatedButton>
           </div>
         </div>
       </nav>

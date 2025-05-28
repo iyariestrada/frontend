@@ -234,14 +234,28 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
         );
         console.log("Usuario:", response.data.user);
 
-        navigate("/", {
-          state: {
-            num_tel: num_tel,
-            token: response.data.token,
-            user: response.data.user,
-            tipo_usuario: response.data.user.tipo_usuario,
-          },
-        });
+        console.log("Token guardado:", response.data.token);
+
+        // Redirección según tipo de usuario
+        if (response.data.user.tipo === "ADM") {
+          navigate("/admin", {
+            state: {
+              num_tel: numeroTel,
+              token: response.data.token,
+              user: response.data.user,
+              tipo_usuario: response.data.user.tipo_usuario,
+            },
+          });
+        } else {
+          navigate("/vista-previa", {
+            state: {
+              num_tel: numeroTel,
+              token: response.data.token,
+              user: response.data.user,
+              tipo_usuario: response.data.user.tipo_usuario_usuario,
+            },
+          });
+        }
       } else {
         setErrors({ login: "Credenciales incorrectas" });
       }
@@ -334,11 +348,21 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
               />
             </div>
 
-            <div className="loginview-form-options">
+            {/*<div className="loginview-form-options">
               {showForgotPassword && (
                 <a href="#!" className="loginview-forgot-password">
                   ¿Olvidaste tu contraseña?
                 </a>
+              )}
+            </div>*/}
+
+            <div className="loginview-form-options">
+              {showForgotPassword && (
+                <Link
+                  to="/forgot-password"
+                  className="loginview-forgot-password">
+                  ¿Olvidaste tu contraseña?
+                </Link>
               )}
             </div>
 
