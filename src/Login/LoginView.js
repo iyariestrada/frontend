@@ -4,6 +4,8 @@ import "./loginview.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { Link } from "react-router-dom";
+
 const API_BASE = "http://localhost:3001/expedientes";
 
 const ENDPOINTS = {
@@ -240,21 +242,14 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
         if (response.data.user.tipo === "ADM") {
           navigate("/admin", {
             state: {
-              num_tel: numeroTel,
+              num_tel: response.data.num_tel,
               token: response.data.token,
               user: response.data.user,
               tipo_usuario: response.data.user.tipo_usuario,
             },
           });
         } else {
-          navigate("/vista-previa", {
-            state: {
-              num_tel: numeroTel,
-              token: response.data.token,
-              user: response.data.user,
-              tipo_usuario: response.data.user.tipo_usuario_usuario,
-            },
-          });
+          navigate("/");
         }
       } else {
         setErrors({ login: "Credenciales incorrectas" });

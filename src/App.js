@@ -11,7 +11,7 @@ import ForgotPassword from "./Login/ForgotPassword.js";
 
 import Admin from "./Dashboard/layouts/Admin.js";
 
-import Settings from "./Dashboard/views/admin/Settings.js";
+import Settings from "./Dashboard/views/Settings.js";
 
 import LineaDelTiempo from "./linea/LineaDelTiempo.js";
 import HorarioSemanal from "./HorarioSemanal.js";
