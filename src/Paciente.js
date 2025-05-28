@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import LineaDelTiempo from "./linea/LineaDelTiempo.js";
 
 const Paciente = ({
   nombre,
   expediente,
   tutor,
   estatus,
-  onVerLinea,
   onVerEstatus,
   usuario,
   token,
-  tipo_usuario,
+  tipo,
 }) => {
   const getStatusClass = (estatus) => {
     switch (estatus) {
@@ -60,13 +60,6 @@ const Paciente = ({
     }
   };
 
-  useEffect(() => {
-    console.log("Paciente montado");
-    return () => {
-      console.log("Paciente desmontado");
-    };
-  }, []);
-
   const navigate = useNavigate();
 
   const StatusComponent = getStatusClass(estatus);
@@ -84,16 +77,12 @@ const Paciente = ({
   `;
 
   const handlerAsignarCita = () => {
-    navigate("/agendar-cita", {
-      state: {
-        exp_num: expediente,
-        token: token,
-        user: usuario,
-        num_tel: usuario.numero_tel,
-        tipo_usuario: usuario.tipo,
-      },
-    });
+    navigate("/agendar-cita", {state: { exp_num: expediente} });
   };
+
+  const onVerLinea = () => {
+    navigate("/linea-del-tiempo", { state: { exp_num: expediente } });
+  }
 
   return (
     <StatusComponent>
@@ -111,12 +100,11 @@ const Paciente = ({
           </p>
         </PatientInfo>
         <ButtonGroup>
-          <Button onClick={onVerEstatus}>Ver Estatus</Button>
-          {usuario?.tipo === "R" ? (
+          {tipo === "R" ? (
             <Button onClick={handlerAsignarCita}>Asignar cita</Button>
           ) : (
             <Button onClick={onVerLinea}>Ver linea del tiempo</Button>
-          )}
+          )} 
         </ButtonGroup>
       </InfoAndButtons>
     </StatusComponent>

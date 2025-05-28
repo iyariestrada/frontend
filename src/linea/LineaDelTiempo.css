@@ -1,0 +1,37 @@
+.main-container {
+  align-items: center ;
+}
+
+.timeline-container {
+  margin-top: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.timeline-container .ant-timeline-item {
+  padding: 10px 0;
+  font-size: 24px;
+}
+
+.timeline-container .ant-timeline-item-content {
+  background-color: #f5f5f5;
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.timeline-container .ant-timeline-item-content:hover {
+  background-color: #e6f7ff;
+  transform: scale(1.02);
+}
+
+.timeline-container .ant-timeline-item-label {
+  font-weight: bold;
+  color: #4f4f4f;
+}

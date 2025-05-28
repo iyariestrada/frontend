@@ -17,11 +17,14 @@ import Index from "./Dashboard/views/Index.js";
 
 import Settings from "./Dashboard/views/admin/Settings.js";
 
+import LineaDelTiempo from "./linea/LineaDelTiempo.js";
+import HorarioSemanal from "./HorarioSemanal.js";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/vista-previa" element={<VistaPrevia />} />
+        <Route path="/" element={<VistaPrevia />} />
         <Route path="/agregar-registro" element={<CompFormularioRegistro />} />
         <Route
           path="/seleccionarterapeuta"
@@ -37,6 +40,11 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/index" element={<Index />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/linea-del-tiempo" element={<LineaDelTiempo/>} />
+        <Route
+          path="/ver-horario" 
+          element={<HorarioSemanal/>}
+        />
       </Routes>
     </BrowserRouter>
   );

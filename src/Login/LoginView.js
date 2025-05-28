@@ -4,6 +4,14 @@ import "./loginview.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_BASE = "http://localhost:3001/expedientes";
+
+const ENDPOINTS = {
+  login: `${API_BASE}/usuarios/login`,
+  registerValid: (num_tel) => `${API_BASE}/usuarios/registervalid/${num_tel}`,
+  completeRegistration: `${API_BASE}/usuarios/completeregistration`,
+};
+
 const LoginView = ({ onLogin, showForgotPassword = true }) => {
   const [activeTab, setActiveTab] = useState("login");
   const [loginForm, setLoginForm] = useState({
@@ -43,16 +51,13 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3001/expedientes/usuarios/registervalid/${registerForm.num_tel}`
+        ENDPOINTS.registerValid(registerForm.num_tel)
       );
 
       if (response.data) {
         setPhoneValid(true);
         setErrors((prev) => ({ ...prev, num_tel: null }));
-        // Opcional: guardar los datos del usuario para el registro
-        // setUserData(response.data);
       } else {
-        // Esto podría no ejecutarse nunca si el backend devuelve 404 para no encontrado
         setPhoneValid(false);
         setErrors((prev) => ({
           ...prev,
@@ -154,14 +159,14 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
       return;
     }
 
-    const numeroTel = registerForm.num_tel.toString().trim();
+    const num_tel = registerForm.num_tel.toString().trim();
 
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3001/expedientes/usuarios/completeregistration",
+        ENDPOINTS.completeRegistration,
         {
-          numero_tel: numeroTel,
+          numero_tel: num_tel,
           nombre: registerForm.name,
           correo: registerForm.email,
           password: registerForm.password,
@@ -201,11 +206,11 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
 
     try {
       setLoading(true);
-      const numeroTel = loginForm.num_tel.toString().trim();
+      const num_tel = loginForm.num_tel.toString().trim();
       const response = await axios.post(
-        "http://localhost:3001/expedientes/usuarios/login",
+        ENDPOINTS.login,
         {
-          numero_tel: numeroTel,
+          numero_tel: num_tel,
           password: loginForm.password,
         }
       );
@@ -220,18 +225,18 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
         localStorage.setItem(
           "user",
           JSON.stringify({
-            num_tel: numeroTel,
-            id: response.data.user.id_usuario,
+            // num_tel, id, nombre, tipo
+            num_tel: num_tel,
+            id: response.data.user.id,
             nombre: response.data.user.nombre,
-            tipo: response.data.user.tipo_usuario,
+            tipo: response.data.user.tipo,
           })
         );
+        console.log("Usuario:", response.data.user);
 
-        console.log("Token guardado:", response.data.token);
-
-        navigate("/vista-previa", {
+        navigate("/", {
           state: {
-            num_tel: numeroTel,
+            num_tel: num_tel,
             token: response.data.token,
             user: response.data.user,
             tipo_usuario: response.data.user.tipo_usuario,

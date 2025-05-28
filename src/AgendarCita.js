@@ -34,11 +34,11 @@ const AgendarCita = () => {
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
-        if (cita.numero_tel_terapeuta === null) {
+        if (cita.numero_tel_terapeuta === "NA") {
           const respuesta = await axios.get(
-            "http://localhost:3001/expedientes/usuarios/tipo/A"
+            "http://localhost:3001/expedientes/usuarios/" + cita.etapa
           );
-          setTherapists(respuesta.data.usuarios);
+          setTherapists(respuesta.data);
         } else if (cita.numero_tel_terapeuta) {
           const respuesta = await axios.get(
             `http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
@@ -47,6 +47,8 @@ const AgendarCita = () => {
         } else {
           console.error("El campo numero_tel_terapeuta es undefined");
         }
+
+        console.log("Therapists fetched:", therapists);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -63,11 +65,7 @@ const AgendarCita = () => {
           const response = await axios.get(
             `http://localhost:3001/expedientes/citas/${selectedTherapist}`
           );
-
-          console.log("Citas Terapeuta:", selectedTherapist);
-
-          console.log("Citas del terapeuta:", response.data);
-
+          console.log(response.data)
           const citasDelDia = response.data.filter(
             (cita) => cita.fecha === formattedDate
           );
@@ -107,12 +105,9 @@ const AgendarCita = () => {
       return;
     }
 
-    // pasar selectedTherapist a string
-    const selectedTherapistString = String(selectedTherapist);
-
     const payload = {
       exp_num,
-      numero_tel_terapeuta: selectedTherapistString,
+      numero_tel_terapeuta: selectedTherapist,
       fecha: formattedDate,
       hora: selectedTime,
     };
@@ -123,14 +118,13 @@ const AgendarCita = () => {
         payload
       );
       alert("Cita agendada con éxito.");
-      navigate("/vista-previa", {
-        state: {
-          numero_tel,
-          token,
-          user,
-          tipo_usuario,
-        },
-      });
+
+      navigate("/", {state: {
+        num_tel: numero_tel,
+        token: token,
+        user: user,
+        tipo_usuario: tipo_usuario,
+      }});
     } catch (error) {
       console.error("Error agendando la cita:", error);
       alert("Hubo un problema al agendar la cita. Intenta nuevamente.");

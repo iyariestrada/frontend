@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { citasPrimeraCita} from "./rutasApi.js"
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { set } from "react-hook-form";
 
 const SeleccionarTerapeuta = () => {
   const [therapists, setTherapists] = useState([]);
@@ -10,17 +12,20 @@ const SeleccionarTerapeuta = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [user] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
   const exp_num = location.state?.exp_num;
-  const numero_tel = location.state?.numero_tel; // USUARIO ACTUAL
-  const token = location.state?.token;
-  const user = location.state?.user;
-  const tipo_usuario = location.state?.tipo_usuario;
+  const tipo = location.state?.tipo;
 
   useEffect(() => {
+    setNumeroTel(user.numero_tel);
     axios
-      .get("http://localhost:3001/expedientes/usuarios/tipo/A")
+      .get("http://localhost:3001/expedientes/usuarios/tipo/" + tipo)
       .then((response) => setTherapists(response.data.usuarios))
       .catch((error) => console.error("Error fetching therapists:", error));
+      console.log("Therapists fetched:", therapists);
+      console.log("Tipo de usuario:", tipo);
   }, []);
 
   const handleSeleccionarTerapeuta = async (event) => {
@@ -31,20 +36,14 @@ const SeleccionarTerapeuta = () => {
       numero_tel_terapeuta === "NA" ? null : numero_tel_terapeuta;
 
     try {
-      const response = await axios.post(URI, {
+       const response = await axios.post(citasPrimeraCita, {
         exp_num: exp_num,
         numero_tel_terapeuta: terapeutaAsignado,
+        tipo: tipo,
       });
 
       console.log("Registro exitoso:", response.data);
-      navigate("/vista-previa", {
-        state: {
-          numero_tel: numero_tel,
-          token: token,
-          user: user,
-          tipo_usuario: tipo_usuario,
-        },
-      });
+      navigate("/");
     } catch (error) {
       console.error(
         "Error al registrar:",

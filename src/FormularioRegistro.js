@@ -30,12 +30,15 @@ const CompFormularioRegistro = () => {
   const [lada, setLada] = useState("52");
 
   const navigate = useNavigate();
-
   const location = useLocation();
-  const num_tel = location.state?.num_tel;
-  const token = location.state?.token;
-  const user = location.state?.user;
-  const tipo_usuario = location.state?.tipo_usuario;
+
+  const [token] = useState(
+    localStorage.getItem("token")
+  );
+  const [user] = useState(
+    // user.num_tel, id, nombre, tipo
+    JSON.parse(localStorage.getItem("user"))
+  );
 
   /*const store = async (e) => {
     e.preventDefault();
@@ -55,7 +58,7 @@ const CompFormularioRegistro = () => {
 
       await axios.post(URI_PT, {
         exp_num: exp_num,
-        numero_tel_terapeuta: num_tel,
+        numero_tel_terapeuta: user.num_tel,
       });
     } catch (error) {
       console.error("Error al registrar:", error);
@@ -76,17 +79,17 @@ const CompFormularioRegistro = () => {
       navigate("/seleccionarterapeuta", {
         state: {
           exp_num: exp_num,
-          num_tel: num_tel,
+          user.num_tel: user.num_tel,
           token: token,
           user: user,
           tipo_usuario: tipo_usuario,
         },
       });
     } else {
-      navigate("/vista-previa", {
+      navigate("/", {
         state: {
           exp_num: exp_num,
-          num_tel: num_tel,
+          user.num_tel: user.num_tel,
           token: token,
           user: user,
           tipo_usuario: tipo_usuario,
@@ -114,7 +117,7 @@ const CompFormularioRegistro = () => {
 
       await axios.post(URI_PT, {
         exp_num: exp_num,
-        numero_tel_terapeuta: num_tel,
+        numero_tel_terapeuta: user.num_tel,
       });
 
       await axios.post(
@@ -128,20 +131,18 @@ const CompFormularioRegistro = () => {
         navigate("/seleccionarterapeuta", {
           state: {
             exp_num: exp_num,
-            num_tel: num_tel,
-            token: token,
-            user: user,
-            tipo_usuario: tipo_usuario,
+            num_tel: user.num_tel,
+            tipo: "A",
           },
         });
       } else {
-        navigate("/vista-previa", {
+        navigate("/", {
           state: {
             exp_num: exp_num,
-            num_tel: num_tel,
+            num_tel: user.num_tel,
             token: token,
             user: user,
-            tipo_usuario: tipo_usuario,
+            tipo_usuario: user.tipo,
           },
         });
       }
@@ -183,7 +184,7 @@ const CompFormularioRegistro = () => {
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
 
-  console.log("num_tel", num_tel);
+  console.log("user.num_tel", user.num_tel);
 
   return (
     <div className="formulario-page">

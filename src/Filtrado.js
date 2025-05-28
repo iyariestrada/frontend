@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Filtrado = ({
   pacientes,
   onFilteredPatients,
-  numero_tel,
+  num_tel,
   token,
   tipo_usuario,
 }) => {
@@ -24,7 +24,7 @@ const Filtrado = ({
   if (tipo_usuario === "R") {
     URI = `http://localhost:3001/expedientes/estadopacientes/todos`;
   } else {
-    URI = `http://localhost:3001/expedientes/estadopacientes/${numero_tel}`;
+    URI = `http://localhost:3001/expedientes/estadopacientes/${num_tel}`;
   }
 
   let filters = [
