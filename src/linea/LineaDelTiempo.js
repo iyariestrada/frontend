@@ -3,8 +3,8 @@ import "./LineaDelTiempo.css";
 import Header from "../Header.js";
 import ObservacionesModal from "./ObservacionesModal.js";
 import {
-  citasGetEtapa,
-  citasPrimeraCita,
+  getEtapaCita,
+  createPrimeraCita,
   getCheckCitaPrevia,
 } from "../rutasApi.js";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -186,10 +186,10 @@ const LineaDelTiempo = () => {
 
   const SiguienteCitaHandler = async () => {
     try {
-      const uri = citasGetEtapa + exp_num;
+      const uri = getEtapaCita + exp_num;
       const response = await axios.get(uri);
       const etapa = response.data;
-      await axios.post(citasPrimeraCita, {
+      await axios.post(createPrimeraCita, {
         exp_num: exp_num,
         numero_tel_terapeuta: num_tel,
         tipo: etapa,
@@ -208,7 +208,7 @@ const LineaDelTiempo = () => {
   const SiguienteEtapaHandler = async () => {
     try {
       await axios.get(getCheckCitaPrevia + exp_num);
-      const uri = citasGetEtapa + exp_num;
+      const uri = getEtapaCita + exp_num;
       const response = await axios.get(uri);
       const etapaAnterior = response.data;
       const etapa = String.fromCharCode(etapaAnterior.charCodeAt(0) + 1);

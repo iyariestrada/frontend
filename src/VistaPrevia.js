@@ -6,6 +6,7 @@ import ListaExpedientes from "./ListaExpedientes";
 import Header from "./Header";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { getTerapeutaWithPatients, getCitasTerapeutaDia, getCitasSinFechaNiHora } from "./rutasApi.js";
 
 var citas = { dia: "", horario: [] };
 
@@ -83,7 +84,7 @@ function VistaPrevia() {
       if (user.tipo !== "R") {
         try {
           const response = await axios.get(
-            `http://localhost:3001/expedientes/vistaprevia/${user.num_tel}`
+            getTerapeutaWithPatients + user.num_tel
           );
           if (Array.isArray(response.data.pacientes)) {
             setPacientes(response.data.pacientes);
@@ -97,7 +98,7 @@ function VistaPrevia() {
           }
 
           const citas_resp = await axios.get(
-            `http://localhost:3001/expedientes/horario/${user.num_tel}`
+            getCitasTerapeutaDia + user.num_tel
           );
           console.log("Citas", citas_resp.data);
           const dia =
@@ -126,7 +127,7 @@ function VistaPrevia() {
       } else {
         try {
           const response = await axios.get(
-            `http://localhost:3001/expedientes/citas/sinfecha/sinhora`
+            getCitasSinFechaNiHora
           );
           if (Array.isArray(response.data)) {
             setPacientes(response.data);
