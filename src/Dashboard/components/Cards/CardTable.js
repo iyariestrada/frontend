@@ -12,6 +12,8 @@ import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 
+import { updateUserPhone, deleteUsuario } from "../../../rutasApi";
+
 const modalStyle = {
   position: "fixed",
   top: 0,
@@ -140,13 +142,10 @@ export default function CardTable({
 
     setIsUpdating(true);
     try {
-      const response = await axios.put(
-        `http://localhost:3001/expedientes/usuarios/updatephone/${currentUser.number}`,
-        {
-          numero_actual: currentUser.number,
-          nuevo_numero: editedNumber,
-        }
-      );
+      const response = await axios.put(updateUserPhone(currentUser.number), {
+        numero_actual: currentUser.number,
+        nuevo_numero: editedNumber,
+      });
 
       setAlert({
         open: true,
@@ -187,10 +186,7 @@ export default function CardTable({
 
     setIsDeleting(true);
     try {
-      // Llama a la API DELETE
-      await axios.delete(
-        `http://localhost:3001/expedientes/usuarios/${currentUser.number}`
-      );
+      await axios.delete(deleteUsuario(currentUser.number));
 
       setAlert({
         open: true,

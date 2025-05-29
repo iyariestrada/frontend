@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+import { createUsuario } from "../../rutasApi.js";
 const NewUser = () => {
   const [lada, setLada] = useState("");
   const [phone, setPhone] = useState("");
@@ -83,7 +84,7 @@ const NewUser = () => {
     const num_tel = (lada + phone).toString().trim();
 
     try {
-      await axios.post("http://localhost:3001/expedientes/usuarios/new", {
+      await axios.post(createUsuario, {
         numero_tel: num_tel,
         tipo_usuario: typeUser,
       });

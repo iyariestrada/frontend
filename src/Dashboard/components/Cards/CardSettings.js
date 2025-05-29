@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import {
+  getUsuario,
+  updateUserData,
+  updatePassword,
+} from "../../../rutasApi.js";
 
 export default function CardSettings() {
   const location = useLocation();
@@ -30,18 +35,14 @@ export default function CardSettings() {
     location.state?.user || JSON.parse(localStorage.getItem("user"))
   );
 
-  const numeroTel = fromHeader
-    ? location.state?.user?.numero_tel
-    : user.num_tel;
+  const numeroTel = fromHeader ? location.state?.user?.num_tel : user.num_tel;
 
   console.log("user in card settings", user);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3001/expedientes/usuarios/${numeroTel}`
-        );
+        const response = await fetch(getUsuario(numeroTel));
         if (!response.ok) {
           throw new Error("Error al obtener los datos del usuario");
         }
@@ -96,14 +97,11 @@ export default function CardSettings() {
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:3001/expedientes/usuarios/${numeroTel}`,
-        {
-          numero_tel: userData.phone,
-          nombre: userData.fullName,
-          correo: userData.email,
-        }
-      );
+      const response = await axios.put(updateUserData(numeroTel), {
+        numero_tel: userData.phone,
+        nombre: userData.fullName,
+        correo: userData.email,
+      });
       // Mostrar nuevos datos confirmados por backend (si los devuelve)
       const updatedData = response.data;
       setUserData({
@@ -165,15 +163,12 @@ export default function CardSettings() {
     }
 
     try {
-      await axios.put(
-        `http://localhost:3001/expedientes/usuarios/changepassword/${numeroTel}`,
-        {
-          numero_tel: numeroTel,
-          currentPassword: passwords.current,
-          newPassword: passwords.new,
-          confirmPassword: passwords.confirm,
-        }
-      );
+      await axios.put(updatePassword(numeroTel), {
+        numero_tel: numeroTel,
+        currentPassword: passwords.current,
+        newPassword: passwords.new,
+        confirmPassword: passwords.confirm,
+      });
 
       setPasswordMessage({
         type: "success",

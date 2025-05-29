@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-// components
 import CardTable from "../components/Cards/CardTable.js";
 
+import { getAllUsuarios } from "../../rutasApi.js";
 export default function Tables() {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/expedientes/usuarios/all"
-        );
+        const response = await axios.get(getAllUsuarios);
         // La respuesta tiene la forma { count, usuarios: [...] }
         setUsuarios(response.data.usuarios || []);
       } catch (error) {
@@ -35,9 +33,6 @@ export default function Tables() {
             }))}
           />
         </div>
-        {/*<div className="w-full mb-12 px-4">
-          <CardTable color="dark" />
-        </div>*/}
       </div>
     </>
   );
