@@ -41,6 +41,20 @@ const getCitasByPaciente = expedientes + "citas/paciente/";
 //Rutas Expedientes -- Citas
 const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora"; 
 
+// Rutas expedientes/usuarios
+const usuarios = host + "expedientes/usuarios";
+// Settings Card
+const getUsuario = (numeroTel) => `${usuarios}/${numeroTel}`;
+const updateUserData = (numeroTel) => `${usuarios}/${numeroTel}`;
+const updatePassword = (numeroTel) => `${usuarios}/updatePassword/${numeroTel}`;
+// Card Table
+const updateUserPhone = (numeroTel) => `${usuarios}/updatephone/${numeroTel}`;
+const deleteUsuario = (numeroTel) => `${usuarios}/${numeroTel}`;
+// Header stats
+const getAllUsuarios = usuarios + "/all";
+const getPacientes = usuarios + "/pacientes";
+// AltaUsuarios
+const createUsuario = usuarios + "/new";
 
 export {
   QCHAT_test,
@@ -62,4 +76,12 @@ export {
   getCitasTerapeutaSemana,
   getCitasByPaciente,
   getCitasSinFechaNiHora,
+  getUsuario,
+  updateUserData,
+  updatePassword,
+  updateUserPhone,
+  deleteUsuario,
+  getAllUsuarios,
+  getPacientes,
+  createUsuario,
 };

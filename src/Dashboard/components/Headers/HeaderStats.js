@@ -3,6 +3,8 @@ import axios from "axios";
 
 import CardStats from "../Cards/CardStats.js";
 
+import { getAllUsuarios, getPacientes } from "../../../rutasApi.js";
+
 export default function HeaderStats() {
   const [numUsuarios, setNumUsuarios] = React.useState(0);
   const [numPacientes, setNumPacientes] = React.useState(0);
@@ -10,9 +12,7 @@ export default function HeaderStats() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/expedientes/usuarios/all"
-        );
+        const response = await axios.get(getAllUsuarios);
         setNumUsuarios(response.data.count);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -25,9 +25,7 @@ export default function HeaderStats() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/expedientes/usuarios/pacientes"
-        );
+        const response = await axios.get(getPacientes);
         //contar el número de pacientes de la respuesta
         setNumPacientes(
           Array.isArray(response.data) ? response.data.length : 0
@@ -52,20 +50,12 @@ export default function HeaderStats() {
                 <CardStats
                   statSubtitle="USUARIOS REGISTRADOS"
                   statTitle={numUsuarios}
-                  /*statArrow="up"
-                  statPercent="3.48"
-                  statPercentColor="text-emerald-500"
-                  statDescripiron="Since last month"*/
                 />
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
                 <CardStats
                   statSubtitle="PACIENTES REGISTRADOS"
                   statTitle={numPacientes}
-                  /*statArrow="down"
-                  statPercent="3.48"
-                  statPercentColor="text-red-500"
-                  statDescripiron="En esta semana"*/
                 />
               </div>
             </div>
