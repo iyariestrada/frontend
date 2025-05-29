@@ -22,9 +22,9 @@ const Filtrado = ({
   let URI;
 
   if (tipo_usuario === "R") {
-    URI = `http://localhost:3001/expedientes/estadopacientes/todos`;
+    URI = `http://localhost:3001/estado/`;
   } else {
-    URI = `http://localhost:3001/expedientes/estadopacientes/${num_tel}`;
+    URI = `http://localhost:3001/estado/terapeuta/${num_tel}`;
   }
 
   let filters = [
@@ -56,16 +56,14 @@ const Filtrado = ({
 
   useEffect(() => {
     // Añadir el atributo estatus a cada paciente
-    const pacientesConEstatus = pacientes.map((paciente) => {
-      const estadoPaciente = estadoPacientes.find(
-        (ep) => ep.exp_num === paciente.exp_num
-      );
-      return {
-        ...paciente,
-        estatus: estadoPaciente ? estadoPaciente.tratamiento_estado : null,
-      };
-    });
 
+    const pacientesConEstatus = estadoPacientes.map((ep) => ({
+      nombre: ep.paciente.nombre,
+      exp_num: ep.exp_num,
+      estatus: ep.estado,
+    }));
+
+    console.log("Pacientes con estatus:", pacientesConEstatus);
     setFilteredPatients(pacientesConEstatus);
   }, [estadoPacientes, pacientes]);
 
@@ -105,29 +103,31 @@ const Filtrado = ({
     });
 
     // Filtrar por estado
-    if (selectedFilters.length > 0) {
-      filtered = filtered.filter((paciente) => {
-        const { estatus } = paciente;
-        return selectedFilters.some((filter) => {
-          switch (filter) {
-            case "Pendiente de asignar cita":
-              return estatus === 0;
-            case "Cita asignada":
-              return estatus === 1;
-            case "Tratamiento en proceso":
-              return estatus === 1;
-            case "Tratamiento terminado":
-              return estatus === 2;
-            case "Tratamiento interrumpido":
-              return estatus === 0;
-            case "Diagnóstico pendiente":
-              return estatus === 0 || estatus === 1;
-            default:
-              return true;
-          }
+// ...existing code...
+      if (selectedFilters.length > 0) {
+        filtered = filtered.filter((paciente) => {
+          const { estatus } = paciente;
+          return selectedFilters.some((filter) => {
+            switch (filter) {
+              case "Pendiente de asignar cita":
+                return estatus === "P";
+              case "Cita asignada":
+                return estatus === "A";
+              case "Tratamiento en proceso":
+                return estatus === "E";
+              case "Tratamiento terminado":
+                return estatus === "T";
+              case "Tratamiento interrumpido":
+                return estatus === "I";
+              case "Diagnóstico pendiente":
+                return estatus === "D";
+              default:
+                return true;
+            }
+          });
         });
-      });
-    }
+      }
+// ...existing code...
 
     // Filtrar por nombre
     if (nameFilter) {
@@ -137,13 +137,14 @@ const Filtrado = ({
     }
 
     // Filtrar por rango de edad
-    filtered = filtered.filter((paciente) => {
-      const edadEnMeses = calcularEdadEnMeses(paciente.fecha_nacimiento);
-      const minEdad =
-        (parseInt(minAge.years) || 0) * 12 + (parseInt(minAge.months) || 0);
-      const maxEdad =
-        (parseInt(maxAge.years) || 999) * 12 + (parseInt(maxAge.months) || 999);
-      return edadEnMeses >= minEdad && edadEnMeses <= maxEdad;
+    filtered = filtered.map((paciente) => {
+      const estadoPaciente = estadoPacientes.find(
+        (ep) => ep.exp_num === paciente.exp_num
+      );
+      return {
+        ...paciente,
+        estatus: estadoPaciente ? estadoPaciente.estado : null,
+      };
     });
 
     // Ordenar los pacientes
@@ -156,7 +157,7 @@ const Filtrado = ({
           calcularEdadEnMeses(b.fecha_nacimiento)
       );
     }
-
+    console.log("Pacientes filtrados:", filtered);
     setFilteredPatients(filtered);
     onFilteredPatients(filtered);
   };

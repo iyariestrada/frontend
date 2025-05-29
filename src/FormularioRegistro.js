@@ -119,12 +119,22 @@ const CompFormularioRegistro = () => {
         exp_num: exp_num,
         numero_tel_terapeuta: user.num_tel,
       });
+      /*
+
+      CAMBIAR POR INSERT EN LA NUEVA TABLA
 
       await axios.post(
         "http://localhost:3001/expedientes/pacienteestado/actual",
         { exp_num: exp_num, tratamiento_estado: pasoTamizaje ? 1 : 2 }
       );
+      */
 
+      await axios.post(
+        `http://localhost:3001/estado/`,
+        { exp_num: exp_num , estado: pasoTamizaje ? "P" : "T" } 
+      );
+
+      
       alert("Formulario registrado");
 
       if (pasoTamizaje) {
