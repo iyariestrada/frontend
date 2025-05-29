@@ -1,7 +1,6 @@
-
 const host = "http://localhost:3001/";
 
-//TEST 
+//TEST
 const QCHAT_test =
   "https://docs.google.com/forms/d/e/1FAIpQLSd9SgHqVPBoTbqz5ZQ6f9UDdIAJhSfoshkgFdRUjsYv0lYsnA/viewform";
 const SCQ_test =
@@ -13,10 +12,10 @@ const createPrimeraCita = citas + "primera-cita";
 const getEtapaCita = citas + "etapa/";
 const getCheckCitaPrevia = citas + "check-cita-previa/";
 
-//Rutas Observaciones 
+//Rutas Observaciones
 const observaciones = host + "observaciones/";
 
-const getObservacionesCita = observaciones + "cita/"
+const getObservacionesCita = observaciones + "cita/";
 const createObservacionCita = observaciones + "cita";
 
 //Rutas PacienteEstado
@@ -46,7 +45,6 @@ const getCitasTerapeutaSemana = expedientes + "horario/semana/";
 //Rutas Expedientes -- Citas
 const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora"; 
 const getCitasByPaciente = expedientes + "citas/paciente/";
-
 
 // Rutas expedientes/usuarios
 const usuarios = host + "expedientes/usuarios";
