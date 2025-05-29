@@ -5,11 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { QCHAT_test, SCQ_test } from "./rutasApi.js";
-// import { QCHAT_test, SCQ_test } from "./rutasApi.js";  
+// import { QCHAT_test, SCQ_test } from "./rutasApi.js";
 
 const URI = "http://localhost:3001/expedientes";
 const URI_PT = "http://localhost:3001/expedientes/pacientesterapeutas";
-
 
 const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
@@ -30,9 +29,7 @@ const CompFormularioRegistro = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [token] = useState(
-    localStorage.getItem("token")
-  );
+  const [token] = useState(localStorage.getItem("token"));
   const [user] = useState(
     // user.num_tel, id, nombre, tipo
     JSON.parse(localStorage.getItem("user"))
@@ -60,12 +57,11 @@ const CompFormularioRegistro = () => {
         numero_tel_terapeuta: user.num_tel,
       });
 
-      await axios.post(
-        `http://localhost:3001/estado/`,
-        { exp_num: exp_num , estado: pasoTamizaje ? "P" : "T" } 
-      );
+      await axios.post(`http://localhost:3001/estado/`, {
+        exp_num: exp_num,
+        estado: pasoTamizaje ? "P" : "T",
+      });
 
-      
       alert("Formulario registrado");
 
       if (pasoTamizaje) {
