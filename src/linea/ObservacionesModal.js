@@ -2,15 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Input, Button, message, Spin } from "antd";
 import "./ObservacionesModal.css";
+import { getObservacionesCita, createObservacionCita } from "../rutasApi.js";
 
 const { TextArea } = Input;
-
-const BASE_URL = "http://localhost:3001/observaciones";
-
-const ENDPOINTS = {
-  getObservacionesByCita: (citaId) => `${BASE_URL}/cita/${citaId}`,
-  postObservacion: () => `${BASE_URL}/cita`,
-};
 
 const ObservacionesModal = ({
   visible,
@@ -40,7 +34,7 @@ const ObservacionesModal = ({
     setCargandoObservaciones(true);
     try {
       const response = await axios.get(
-        ENDPOINTS.getObservacionesByCita(citaSeleccionada.cita_id)
+        getObservacionesCita + citaSeleccionada.cita_id
       );
       setObservaciones(response.data);
     } catch (error) {
@@ -65,7 +59,7 @@ const ObservacionesModal = ({
 
     setGuardandoObservacion(true);
     try {
-      const response = await axios.post(ENDPOINTS.postObservacion(), {
+      const response = await axios.post(createObservacionCita, {
         cita_id: citaSeleccionada.cita_id,
         observacion: nuevaObservacion.trim(),
         numero_tel_terapeuta: numeroTelTerapeuta,

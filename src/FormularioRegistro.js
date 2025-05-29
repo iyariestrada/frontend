@@ -4,14 +4,12 @@ import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { QCHAT_test, SCQ_test } from "./rutasApi.js";
+// import { QCHAT_test, SCQ_test } from "./rutasApi.js";  
 
 const URI = "http://localhost:3001/expedientes";
 const URI_PT = "http://localhost:3001/expedientes/pacientesterapeutas";
 
-const QCHAT_test =
-  "https://docs.google.com/forms/d/e/1FAIpQLSd9SgHqVPBoTbqz5ZQ6f9UDdIAJhSfoshkgFdRUjsYv0lYsnA/viewform";
-const SCQ_test =
-  "https://docs.google.com/forms/d/e/1FAIpQLSfvTRcdS-ncsvY2zIhvE3x0qmlhqBQ3BeoBHoPiaWg-qHgsAw/viewform";
 
 const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
@@ -40,64 +38,6 @@ const CompFormularioRegistro = () => {
     JSON.parse(localStorage.getItem("user"))
   );
 
-  /*const store = async (e) => {
-    e.preventDefault();
-    const formattedDate = patientBirthdate
-      ? patientBirthdate.toISOString().split("T")[0]
-      : null;
-    console.log(exp_num, nombre, formattedDate, numero_tel, remitido);
-
-    try {
-      await axios.post(URI, {
-        exp_num: exp_num,
-        nombre: nombre,
-        fecha_nacimiento: formattedDate,
-        numero_tel: numero_tel,
-        remitido: remitido ? 1 : 0,
-      });
-
-      await axios.post(URI_PT, {
-        exp_num: exp_num,
-        numero_tel_terapeuta: user.num_tel,
-      });
-    } catch (error) {
-      console.error("Error al registrar:", error);
-      alert("Error al registrar el formulario. Por favor, inténtalo de nuevo.");
-    }
-
-    try {
-      await axios.post(
-        "http://localhost:3001/expedientes/pacienteestado/actual",
-        { exp_num: exp_num, tratamiento_estado: pasoTamizaje ? 1 : 2 }
-      );
-    } catch (error) {
-      console.error("Error al registrar:", error);
-    }
-
-    alert("Formulario registrado");
-    if (pasoTamizaje) {
-      navigate("/seleccionarterapeuta", {
-        state: {
-          exp_num: exp_num,
-          user.num_tel: user.num_tel,
-          token: token,
-          user: user,
-          tipo_usuario: tipo_usuario,
-        },
-      });
-    } else {
-      navigate("/vista-previa", {
-        state: {
-          exp_num: exp_num,
-          user.num_tel: user.num_tel,
-          token: token,
-          user: user,
-          tipo_usuario: tipo_usuario,
-        },
-      });
-    }
-  };*/
-
   const store = async (e) => {
     e.preventDefault();
     const formattedDate = patientBirthdate
@@ -119,15 +59,6 @@ const CompFormularioRegistro = () => {
         exp_num: exp_num,
         numero_tel_terapeuta: user.num_tel,
       });
-      /*
-
-      CAMBIAR POR INSERT EN LA NUEVA TABLA
-
-      await axios.post(
-        "http://localhost:3001/expedientes/pacienteestado/actual",
-        { exp_num: exp_num, tratamiento_estado: pasoTamizaje ? 1 : 2 }
-      );
-      */
 
       await axios.post(
         `http://localhost:3001/estado/`,

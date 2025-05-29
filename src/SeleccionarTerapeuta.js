@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { citasPrimeraCita} from "./rutasApi.js"
+import { createPrimeraCita} from "./rutasApi.js"
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { set } from "react-hook-form";
 
@@ -36,7 +36,7 @@ const SeleccionarTerapeuta = () => {
       numero_tel_terapeuta === "NA" ? null : numero_tel_terapeuta;
 
     try {
-       const response = await axios.post(citasPrimeraCita, {
+       const response = await axios.post(createPrimeraCita, {
         exp_num: exp_num,
         numero_tel_terapeuta: terapeutaAsignado,
         tipo: tipo,
