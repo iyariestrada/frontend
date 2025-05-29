@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { createPrimeraCita} from "./rutasApi.js"
+import { createPrimeraCita, getUsuariosByTipo} from "./rutasApi.js"
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { set } from "react-hook-form";
 
 const SeleccionarTerapeuta = () => {
   const [therapists, setTherapists] = useState([]);
@@ -21,17 +20,15 @@ const SeleccionarTerapeuta = () => {
   useEffect(() => {
     setNumeroTel(user.numero_tel);
     axios
-      .get("http://localhost:3001/expedientes/usuarios/tipo/" + tipo)
+      .get(getUsuariosByTipo + tipo)
       .then((response) => setTherapists(response.data.usuarios))
       .catch((error) => console.error("Error fetching therapists:", error));
       console.log("Therapists fetched:", therapists);
-      console.log("Tipo de usuario:", tipo);
+      console.log("Tipo de usuario:", tipo); 
   }, []);
 
   const handleSeleccionarTerapeuta = async (event) => {
     event.preventDefault();
-    const URI = "http://localhost:3001/expedientes/cita";
-
     const terapeutaAsignado =
       numero_tel_terapeuta === "NA" ? null : numero_tel_terapeuta;
 

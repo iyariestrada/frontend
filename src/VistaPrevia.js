@@ -145,16 +145,9 @@ function VistaPrevia() {
     fetchPacientes();
   }, [user, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login-sign-in-up");
-  };
-
   return (
     <div className="app-container">
       <Header
-        onLogout={handleLogout}
         num_tel={user?.num_tel}
         token={token}
         user={user}

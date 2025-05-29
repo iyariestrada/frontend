@@ -27,19 +27,26 @@ const updatePacienteEstado = pacienteEstado;
 const deletePacienteEstado = pacienteEstado;
 const getPacienteEstadosByTerapeuta = pacienteEstado + "terapeuta/";
 const getAllPacienteEstados = pacienteEstado;
+const getPacienteEstadoByExpNum = pacienteEstado;
 
 //Rutas Expedientes -- Vista previa
 const expedientes = host + "expedientes/";
+// Rutas Expedientes 
+const createExpediente = expedientes;
+const updateExpediente = expedientes;
+const getExpediente = expedientes;
 const getTerapeutaWithPatients = expedientes + "vistaprevia/";
 
 //Rutas Expedientes -- Horario
 const getCitasTerapeutaDia = expedientes + "horario/";
 const getCitasTerapeutaDiaByDia = expedientes + "horario/";
 const getCitasTerapeutaSemana = expedientes + "horario/semana/";
-const getCitasByPaciente = expedientes + "citas/paciente/";
+
 
 //Rutas Expedientes -- Citas
 const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora"; 
+const getCitasByPaciente = expedientes + "citas/paciente/";
+
 
 // Rutas expedientes/usuarios
 const usuarios = host + "expedientes/usuarios";
@@ -55,6 +62,13 @@ const getAllUsuarios = usuarios + "/all";
 const getPacientes = usuarios + "/pacientes";
 // AltaUsuarios
 const createUsuario = usuarios + "/new";
+//Tipo 
+const getUsuariosByTipo = usuarios + "/" + "tipo/";
+// Ruta Expediente PacienteTerapeuta
+const createPacientesTerapeutas = host + "pacientesterapeutas";
+
+
+
 
 export {
   QCHAT_test,
@@ -84,4 +98,11 @@ export {
   getAllUsuarios,
   getPacientes,
   createUsuario,
+  getUsuariosByTipo,
+  createPacientesTerapeutas,
+  createExpediente,
+  getExpediente,
+  updateExpediente,
+  getPacienteEstadoByExpNum,
+
 };
