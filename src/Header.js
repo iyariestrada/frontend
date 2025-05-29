@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 const Header = ({
-  onLogout,
   num_tel,
   token,
   user,
@@ -49,6 +48,12 @@ const Header = ({
     });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login-sign-in-up");
+  };
+
   return (
     <HeaderContainer>
       <InstitutionLogo
@@ -73,7 +78,7 @@ const Header = ({
             Agregar Registro
           </ActionButton>
         )}
-        <LogoutButton onClick={onLogout}>Cerrar Sesión</LogoutButton>
+        <LogoutButton onClick={handleLogout}>Cerrar Sesión</LogoutButton>
       </ButtonGroup>
     </HeaderContainer>
   );

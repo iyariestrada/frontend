@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { getPacienteEstadosByTerapeuta, updatePacienteEstado } from "./rutasApi";
 
 const Filtrado = ({
   pacientes,
@@ -13,18 +14,17 @@ const Filtrado = ({
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [sortKey, setSortKey] = useState("");
   const [nameFilter, setNameFilter] = useState("");
+  const [expNumFilter, setExpNumFilter] = useState("");
   const [minAge, setMinAge] = useState({ years: "", months: "" });
   const [maxAge, setMaxAge] = useState({ years: "", months: "" });
   const [estadoPacientes, setEstadoPacientes] = useState([]);
 
-  //axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
   let URI;
 
   if (tipo_usuario === "R") {
-    URI = `http://localhost:3001/estado/`;
+    URI = updatePacienteEstado;
   } else {
-    URI = `http://localhost:3001/estado/terapeuta/${num_tel}`;
+    URI = getPacienteEstadosByTerapeuta + num_tel;
   }
 
   let filters = [
@@ -56,14 +56,13 @@ const Filtrado = ({
 
   useEffect(() => {
     // Añadir el atributo estatus a cada paciente
-
     const pacientesConEstatus = estadoPacientes.map((ep) => ({
       nombre: ep.paciente.nombre,
       exp_num: ep.exp_num,
       estatus: ep.estado,
+      fecha_nacimiento: ep.paciente.fecha_nacimiento, // asegúrate de que exista
     }));
 
-    console.log("Pacientes con estatus:", pacientesConEstatus);
     setFilteredPatients(pacientesConEstatus);
   }, [estadoPacientes, pacientes]);
 
@@ -72,7 +71,7 @@ const Filtrado = ({
       let filters = selectedFilters.filter((el) => el !== selectedCategory);
       setSelectedFilters(filters);
     } else {
-      setSelectedFilters([...selectedFilters, selectedCategory]);
+      setSelectedFilters([selectedCategory]);
     }
   };
 
@@ -82,6 +81,7 @@ const Filtrado = ({
     selectedFilters,
     sortKey,
     nameFilter,
+    expNumFilter,
     minAge,
     maxAge,
     pacientes,
@@ -99,6 +99,7 @@ const Filtrado = ({
       return {
         ...paciente,
         estatus: estadoPaciente ? estadoPaciente.estado : null,
+        fecha_nacimiento: paciente.fecha_nacimiento || (estadoPaciente?.paciente?.fecha_nacimiento ?? null),
       };
     });
 
@@ -134,16 +135,28 @@ const Filtrado = ({
       );
     }
 
-    // Filtrar por rango de edad
-    filtered = filtered.map((paciente) => {
-      const estadoPaciente = estadoPacientes.find(
-        (ep) => ep.exp_num === paciente.exp_num
+    // Filtrar por número de expediente
+    if (expNumFilter) {
+      filtered = filtered.filter((paciente) =>
+        paciente.exp_num?.toString().includes(expNumFilter)
       );
-      return {
-        ...paciente,
-        estatus: estadoPaciente ? estadoPaciente.estado : null,
-      };
-    });
+    }
+
+    // Filtrar por rango de edad
+    const minTotalMeses =
+      (parseInt(minAge.years) || 0) * 12 + (parseInt(minAge.months) || 0);
+    const maxTotalMeses =
+      (parseInt(maxAge.years) || 0) * 12 + (parseInt(maxAge.months) || 0);
+
+    if (minTotalMeses > 0 || maxTotalMeses > 0) {
+      filtered = filtered.filter((paciente) => {
+        if (!paciente.fecha_nacimiento) return false;
+        const edadMeses = calcularEdadEnMeses(paciente.fecha_nacimiento);
+        if (minTotalMeses > 0 && edadMeses < minTotalMeses) return false;
+        if (maxTotalMeses > 0 && edadMeses > maxTotalMeses) return false;
+        return true;
+      });
+    }
 
     // Ordenar los pacientes
     if (sortKey === "nombre") {
@@ -155,12 +168,12 @@ const Filtrado = ({
           calcularEdadEnMeses(b.fecha_nacimiento)
       );
     }
-    console.log("Pacientes filtrados:", filtered);
     setFilteredPatients(filtered);
     onFilteredPatients(filtered);
   };
 
   const calcularEdadEnMeses = (fecha_nacimiento) => {
+    if (!fecha_nacimiento) return 0;
     const hoy = new Date();
     const fechaNacimiento = new Date(fecha_nacimiento);
     let años = hoy.getFullYear() - fechaNacimiento.getFullYear();
@@ -219,6 +232,15 @@ const Filtrado = ({
             type="text"
             value={nameFilter}
             onChange={(e) => setNameFilter(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Filtrar por número de expediente:</label>
+          <input
+            type="text"
+            value={expNumFilter}
+            onChange={(e) => setExpNumFilter(e.target.value)}
+            placeholder="Buscar expediente"
           />
         </div>
         <div>

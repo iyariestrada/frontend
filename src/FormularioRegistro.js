@@ -4,11 +4,8 @@ import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { QCHAT_test, SCQ_test } from "./rutasApi.js";
-// import { QCHAT_test, SCQ_test } from "./rutasApi.js";
 
-const URI = "http://localhost:3001/expedientes";
-const URI_PT = "http://localhost:3001/expedientes/pacientesterapeutas";
+import { QCHAT_test, SCQ_test, createPacientesTerapeutas, createExpediente, createPacienteEstado} from "./rutasApi.js";
 
 const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
@@ -44,7 +41,7 @@ const CompFormularioRegistro = () => {
     const numeroTelCompleto = lada + numero_tel;
 
     try {
-      await axios.post(URI, {
+      await axios.post(createExpediente, {
         exp_num: exp_num,
         nombre: nombre,
         fecha_nacimiento: formattedDate,
@@ -52,15 +49,15 @@ const CompFormularioRegistro = () => {
         remitido: remitido ? 1 : 0,
       });
 
-      await axios.post(URI_PT, {
+      await axios.post(createPacientesTerapeutas, {
         exp_num: exp_num,
         numero_tel_terapeuta: user.num_tel,
       });
 
-      await axios.post(`http://localhost:3001/estado/`, {
-        exp_num: exp_num,
-        estado: pasoTamizaje ? "P" : "T",
-      });
+      await axios.post(
+        createPacienteEstado,
+        { exp_num: exp_num , estado: pasoTamizaje ? "P" : "T" } 
+      );
 
       alert("Formulario registrado");
 

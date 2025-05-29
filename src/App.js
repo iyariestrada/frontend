@@ -16,6 +16,8 @@ import Settings from "./Dashboard/views/Settings.js";
 import LineaDelTiempo from "./linea/LineaDelTiempo.js";
 import HorarioSemanal from "./HorarioSemanal.js";
 
+import EditCompFormularioRegistro from "./EditFormularioRegistro.js";
+
 function App() {
   return (
     <BrowserRouter>
@@ -43,6 +45,10 @@ function App() {
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/linea-del-tiempo" element={<LineaDelTiempo />} />
         <Route path="/ver-horario" element={<HorarioSemanal />} />
+        <Route
+          path="/editar"
+          element={<EditCompFormularioRegistro />}
+        />
       </Routes>
     </BrowserRouter>
   );

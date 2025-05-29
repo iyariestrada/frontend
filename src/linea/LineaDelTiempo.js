@@ -6,14 +6,17 @@ import {
   getEtapaCita,
   createPrimeraCita,
   getCheckCitaPrevia,
+  getExpediente,
+  getCitasByPaciente,
+  getUsuario,
+  updatePacienteEstado,
+  getPacienteEstadoByExpNum
 } from "../rutasApi.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { Timeline } from "antd";
 import {
-  ClockCircleOutlined,
-  CheckCircleOutlined,
   CheckSquareOutlined,
 } from "@ant-design/icons";
 
@@ -24,6 +27,7 @@ const LineaDelTiempo = () => {
   const [nombrePaciente, setNombrePaciente] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
+  const [EstadoPaciente, setEstadoPaciente] = useState("");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,11 +48,11 @@ const LineaDelTiempo = () => {
   const obtenerDatosCitas = async () => {
     try {
       const pacienteResponse = await axios.get(
-        `http://localhost:3001/expedientes/${exp_num}`
+        getExpediente + exp_num
       );
       setNombrePaciente(pacienteResponse.data.nombre);
       const citasResponse = await axios.get(
-        `http://localhost:3001/expedientes/citas/paciente/${exp_num}`
+        getCitasByPaciente + exp_num
       );
       const citas = citasResponse.data;
 
@@ -71,7 +75,7 @@ const LineaDelTiempo = () => {
         if (cita.numero_tel_terapeuta) {
           try {
             const terapeutaResponse = await axios.get(
-              `http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
+              getUsuario+cita.numero_tel_terapeuta
             );
             nombreTerapeuta = terapeutaResponse.data.nombre;
           } catch (error) {
@@ -246,7 +250,7 @@ const LineaDelTiempo = () => {
       cancelText: "Cancelar",
       async onOk() {
         try {
-          await axios.put(`http://localhost:3001/estado/${exp_num}`, {
+          await axios.put(updatePacienteEstado + exp_num, {
             estado: "I",
           });
           Modal.success({
@@ -266,11 +270,51 @@ const LineaDelTiempo = () => {
     });
   };
 
-  useEffect(() => {
-    if (exp_num) {
-      obtenerDatosCitas();
-    }
-  }, [exp_num]);
+    const handleProcesoReanudado = () => {
+    Modal.confirm({
+      title:
+        "¿Estás seguro de que quieres Reanudar el proceso? Considerelo solo si el paciente puede continuar con el tratamiento.",
+      okText: "Sí, Reaunadar",
+      okType: "danger",
+      cancelText: "Cancelar",
+      async onOk() {
+        try {
+          await axios.put(updatePacienteEstado + exp_num, {
+            estado: "P",
+          });
+          Modal.success({
+            title: "Tratamiento reanudado, nueva cita agendada",
+            content: "El estado del paciente ha sido actualizado.",
+            onOk: () => navigate("/"),
+          });
+        } catch (error) {
+          Modal.error({
+            title: "Error",
+            content:
+              error.response?.data?.message ||
+              "No se pudo interrumpir el tratamiento.",
+          });
+        }
+      },
+    });
+  };
+
+
+  const fetchEstadoPaciente = async () => {
+  try {
+    const response = await axios.get(getPacienteEstadoByExpNum + exp_num);
+    setEstadoPaciente(response.data.estado);
+  } catch (error) {
+    console.error("Error al obtener el estado del paciente:", error);
+  }
+  };
+
+useEffect(() => {
+  if (exp_num) {
+    obtenerDatosCitas();
+    fetchEstadoPaciente();
+  }
+}, [exp_num]);
 
   return (
     <div className="main-container">
@@ -303,11 +347,21 @@ const LineaDelTiempo = () => {
         </div>
 
         <div className="botones-container">
-          <button
-            onClick={handleProcesoInterrumpido}
-            className="btn-interrumpido">
-            Marcar tratamiento como interrumpido
-          </button>
+        {
+          EstadoPaciente === "I" ? (
+            <button className="btn-reanudar"
+              onClick={handleProcesoReanudado}>
+            
+              Reanudar tratamiento
+            </button>
+          ) : (
+            <button
+              onClick={handleProcesoInterrumpido}
+              className="btn-interrumpido">
+              Marcar tratamiento como interrumpido
+            </button>
+          )
+        }
         </div>
 
         <ObservacionesModal

@@ -46,6 +46,14 @@ const Paciente = ({
     navigate("/linea-del-tiempo", { state: { exp_num: expediente } });
   };
 
+  const handlerEditInfo = () => {
+    navigate("/editar", {
+      state: {
+        exp_num: expediente
+      }
+    });
+  }
+
   return (
     <StatusComponent>
       <h3>{nombre}</h3>
@@ -61,13 +69,16 @@ const Paciente = ({
             <strong>Estatus:</strong> {getEstatusText(estatus)}
           </p>
         </PatientInfo>
-        <ButtonGroup>
-          {tipo === "R" ? (
-            <Button onClick={handlerAsignarCita}>Asignar cita</Button>
-          ) : (
-            <Button onClick={onVerLinea}>Ver linea del tiempo</Button>
-          )}
-        </ButtonGroup>
+          <ButtonGroup>
+            {tipo === "R" ? (
+              <Button onClick={handlerAsignarCita}>Asignar cita</Button>
+            ) : (
+              <>
+                <Button onClick={handlerEditInfo}>Editar información</Button>
+                <Button onClick={onVerLinea}>Ver linea del tiempo</Button>
+              </>
+            )}
+          </ButtonGroup>
       </InfoAndButtons>
     </StatusComponent>
   );

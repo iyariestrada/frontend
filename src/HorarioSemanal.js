@@ -3,6 +3,7 @@ import { HorarioDia } from "./horario/horarioCompleto.js";
 import axios from "axios";
 import "./HorarioSemanal.css";
 import Header from "./Header.js";
+import {getCitasTerapeutaSemana} from "./rutasApi.js";
 
 export default function HorarioSemanal() {
   const [horario, setHorario] = useState([]);
@@ -26,15 +27,11 @@ export default function HorarioSemanal() {
         hoy.setDate(hoy.getDate() + semanaOffset * 7);
         const dia = hoy.toISOString();
         const response = await axios.post(
-          `http://localhost:3001/expedientes/horario/semana/${num_tel}`,
+          getCitasTerapeutaSemana + num_tel,
           { dia: dia }
         );
         setHorario(response.data);
 
-        const nombreTerapeutaResponse = await axios.get(
-          `http://localhost:3001/expedientes/terapeuta/${num_tel}`
-        );
-        setNombreTerapeuta(nombreTerapeutaResponse.data.nombre);
       } catch (error) {
         console.error("Error fetching horario semanal:", error);
       }
