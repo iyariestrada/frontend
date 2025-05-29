@@ -11,13 +11,16 @@ import ForgotPassword from "./Login/ForgotPassword.js";
 
 import Admin from "./Dashboard/layouts/Admin.js";
 
-import Settings from "./Dashboard/components/Cards/CardSettings.js";
+import Settings from "./Dashboard/views/Settings.js";
+
+import LineaDelTiempo from "./linea/LineaDelTiempo.js";
+import HorarioSemanal from "./HorarioSemanal.js";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/vista-previa" element={<VistaPrevia />} />
+        <Route path="/" element={<VistaPrevia />} />
         <Route
           path="/ajustes"
           element={
@@ -38,6 +41,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/admin/*" element={<Admin />} />
+        <Route path="/linea-del-tiempo" element={<LineaDelTiempo />} />
+        <Route path="/ver-horario" element={<HorarioSemanal />} />
       </Routes>
     </BrowserRouter>
   );

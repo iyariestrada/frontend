@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Filtrado = ({
   pacientes,
   onFilteredPatients,
-  numero_tel,
+  num_tel,
   token,
   tipo_usuario,
 }) => {
@@ -22,9 +22,9 @@ const Filtrado = ({
   let URI;
 
   if (tipo_usuario === "R") {
-    URI = `http://localhost:3001/expedientes/estadopacientes/todos`;
+    URI = `http://localhost:3001/estado/`;
   } else {
-    URI = `http://localhost:3001/expedientes/estadopacientes/${numero_tel}`;
+    URI = `http://localhost:3001/estado/terapeuta/${num_tel}`;
   }
 
   let filters = [
@@ -56,16 +56,14 @@ const Filtrado = ({
 
   useEffect(() => {
     // Añadir el atributo estatus a cada paciente
-    const pacientesConEstatus = pacientes.map((paciente) => {
-      const estadoPaciente = estadoPacientes.find(
-        (ep) => ep.exp_num === paciente.exp_num
-      );
-      return {
-        ...paciente,
-        estatus: estadoPaciente ? estadoPaciente.tratamiento_estado : null,
-      };
-    });
 
+    const pacientesConEstatus = estadoPacientes.map((ep) => ({
+      nombre: ep.paciente.nombre,
+      exp_num: ep.exp_num,
+      estatus: ep.estado,
+    }));
+
+    console.log("Pacientes con estatus:", pacientesConEstatus);
     setFilteredPatients(pacientesConEstatus);
   }, [estadoPacientes, pacientes]);
 
@@ -100,7 +98,7 @@ const Filtrado = ({
       );
       return {
         ...paciente,
-        estatus: estadoPaciente ? estadoPaciente.tratamiento_estado : null,
+        estatus: estadoPaciente ? estadoPaciente.estado : null,
       };
     });
 
@@ -111,17 +109,17 @@ const Filtrado = ({
         return selectedFilters.some((filter) => {
           switch (filter) {
             case "Pendiente de asignar cita":
-              return estatus === 0;
+              return estatus === "P";
             case "Cita asignada":
-              return estatus === 1;
+              return estatus === "A";
             case "Tratamiento en proceso":
-              return estatus === 1;
+              return estatus !== "I" && estatus !== "T" && estatus !== "D";
             case "Tratamiento terminado":
-              return estatus === 2;
+              return estatus === "T";
             case "Tratamiento interrumpido":
-              return estatus === 0;
+              return estatus === "I";
             case "Diagnóstico pendiente":
-              return estatus === 0 || estatus === 1;
+              return estatus === "D";
             default:
               return true;
           }
@@ -137,13 +135,14 @@ const Filtrado = ({
     }
 
     // Filtrar por rango de edad
-    filtered = filtered.filter((paciente) => {
-      const edadEnMeses = calcularEdadEnMeses(paciente.fecha_nacimiento);
-      const minEdad =
-        (parseInt(minAge.years) || 0) * 12 + (parseInt(minAge.months) || 0);
-      const maxEdad =
-        (parseInt(maxAge.years) || 999) * 12 + (parseInt(maxAge.months) || 999);
-      return edadEnMeses >= minEdad && edadEnMeses <= maxEdad;
+    filtered = filtered.map((paciente) => {
+      const estadoPaciente = estadoPacientes.find(
+        (ep) => ep.exp_num === paciente.exp_num
+      );
+      return {
+        ...paciente,
+        estatus: estadoPaciente ? estadoPaciente.estado : null,
+      };
     });
 
     // Ordenar los pacientes
@@ -156,7 +155,7 @@ const Filtrado = ({
           calcularEdadEnMeses(b.fecha_nacimiento)
       );
     }
-
+    console.log("Pacientes filtrados:", filtered);
     setFilteredPatients(filtered);
     onFilteredPatients(filtered);
   };
@@ -182,17 +181,28 @@ const Filtrado = ({
       <CheckboxGroup>
         <label>Filtrar por estado del paciente:</label>
         {filters.map((category, idx) => (
-          <div key={`filters-${idx}`}>
+          <CheckboxRow key={`filters-${idx}`}>
             <input
-              type="checkbox"
-              onChange={() => handleCheckboxChange(category)}
-              checked={selectedFilters.includes(category)}
+              type="radio"
+              name="estadoPaciente"
+              value={category}
+              checked={selectedFilters[0] === category}
+              onChange={() => setSelectedFilters([category])}
             />
-            <label>{category}</label>
-          </div>
+            <label style={{ margin: 0 }}>{category}</label>
+          </CheckboxRow>
         ))}
+        <CheckboxRow>
+          <input
+            type="radio"
+            name="estadoPaciente"
+            value=""
+            checked={selectedFilters.length === 0}
+            onChange={() => setSelectedFilters([])}
+          />
+          <label style={{ margin: 0 }}>Todos</label>
+        </CheckboxRow>
       </CheckboxGroup>
-
       <Sort>
         <label>Ordenar por:</label>
         <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
@@ -264,11 +274,24 @@ const Title = styled.h2`
   margin-bottom: 1rem;
   color: #333;
 `;
+const CheckboxRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    margin: 0;
+    font-weight: normal;
+    display: inline;
+    line-height: 1.2;
+    cursor: pointer;
+  }
+`;
 
 const CheckboxGroup = styled.div`
   margin-bottom: 1rem;
 
-  label {
+  > label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
@@ -277,9 +300,9 @@ const CheckboxGroup = styled.div`
 
   input[type="checkbox"] {
     margin-right: 0.5rem;
+    vertical-align: middle;
   }
 `;
-
 const Sort = styled.div`
   margin-bottom: 1rem;
 

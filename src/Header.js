@@ -33,6 +33,10 @@ const Header = ({
     console.log("user", user);
   };
 
+  const handleVerHorario = () => {
+    navigate("/ver-horario");
+  };
+
   const handleAgregarRegistro = () => {
     console.log("num_tel HEADER", num_tel);
     navigate("/agregar-registro", {
@@ -57,7 +61,7 @@ const Header = ({
         </ProfileName>
         {menuOpen && (
           <DropdownMenu>
-            <MenuItem>Ver horario</MenuItem>
+            <MenuItem onClick={handleVerHorario}>Ver horario</MenuItem>
             <MenuItem onClick={handleAjustes}>Ajustes</MenuItem>
           </DropdownMenu>
         )}

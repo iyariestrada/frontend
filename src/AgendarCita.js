@@ -5,6 +5,16 @@ import logo from "./public/LogoOficial_HIC_horizontal.png"; // Ajusta la ruta de
 import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate, useLocation } from "react-router-dom";
 
+const BASE_URL = "http://localhost:3001/expedientes";
+
+const ENDPOINTS = {
+  getCitaSinFecha: (exp_num) => `${BASE_URL}/cita/sinfecha/sinhora/${exp_num}`,
+  getUsuarios: (etapa) => `${BASE_URL}/usuarios/${etapa}`,
+  getUsuarioByTel: (numero_tel) => `${BASE_URL}/usuarios/${numero_tel}`,
+  getCitasByTherapist: (numero_tel) => `${BASE_URL}/citas/${numero_tel}`,
+  agendarCita: (citaId) => `${BASE_URL}/agendar-cita/${citaId}`,
+};
+
 const AgendarCita = () => {
   const [therapists, setTherapists] = useState([]);
   const [selectedTherapist, setSelectedTherapist] = useState(null);
@@ -28,25 +38,30 @@ const AgendarCita = () => {
     const fetchPacientes = async () => {
       try {
         const citaResponse = await axios.get(
-          `http://localhost:3001/expedientes/cita/sinfecha/sinhora/${exp_num}`
+          ENDPOINTS.getCitaSinFecha(exp_num)
+          //`http://localhost:3001/expedientes/cita/sinfecha/sinhora/${exp_num}`
         );
 
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
-        if (cita.numero_tel_terapeuta === null) {
+        if (cita.numero_tel_terapeuta === "NA") {
           const respuesta = await axios.get(
-            "http://localhost:3001/expedientes/usuarios/tipo/A"
+            ENDPOINTS.getUsuarios(cita.etapa)
+            //"http://localhost:3001/expedientes/usuarios/" + cita.etapa
           );
-          setTherapists(respuesta.data.usuarios);
+          setTherapists(respuesta.data);
         } else if (cita.numero_tel_terapeuta) {
           const respuesta = await axios.get(
-            `http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
+            ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)
+            //`http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
           );
           setTherapists([respuesta.data]);
         } else {
           console.error("El campo numero_tel_terapeuta es undefined");
         }
+
+        console.log("Therapists fetched:", therapists);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -61,13 +76,10 @@ const AgendarCita = () => {
       const fetchTimeSlots = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3001/expedientes/citas/${selectedTherapist}`
+            ENDPOINTS.getCitasByTherapist(selectedTherapist)
+            //`http://localhost:3001/expedientes/citas/${selectedTherapist}`
           );
-
-          console.log("Citas Terapeuta:", selectedTherapist);
-
-          console.log("Citas del terapeuta:", response.data);
-
+          console.log(response.data);
           const citasDelDia = response.data.filter(
             (cita) => cita.fecha === formattedDate
           );
@@ -75,11 +87,15 @@ const AgendarCita = () => {
 
           const allSlots = Array.from(
             { length: 10 },
-            (_, i) => `${8 + i}:00:00`
+            (_, i) => `${String(8 + i).padStart(2, "0")}:00:00`
+          );
+
+          const bookedSlotsNormalized = bookedSlots.map((slot) =>
+            slot.length === 7 ? `0${slot}` : slot
           );
 
           const availableSlots = allSlots.filter(
-            (slot) => !bookedSlots.includes(slot)
+            (slot) => !bookedSlotsNormalized.includes(slot)
           );
 
           setTimeSlots(availableSlots);
@@ -107,28 +123,27 @@ const AgendarCita = () => {
       return;
     }
 
-    // pasar selectedTherapist a string
-    const selectedTherapistString = String(selectedTherapist);
-
     const payload = {
       exp_num,
-      numero_tel_terapeuta: selectedTherapistString,
+      numero_tel_terapeuta: selectedTherapist,
       fecha: formattedDate,
       hora: selectedTime,
     };
 
     try {
       await axios.put(
-        `http://localhost:3001/expedientes/agendar-cita/${citaId}`,
+        ENDPOINTS.agendarCita(citaId),
+        //`http://localhost:3001/expedientes/agendar-cita/${citaId}`,
         payload
       );
       alert("Cita agendada con éxito.");
-      navigate("/vista-previa", {
+
+      navigate("/", {
         state: {
-          numero_tel,
-          token,
-          user,
-          tipo_usuario,
+          num_tel: numero_tel,
+          token: token,
+          user: user,
+          tipo_usuario: tipo_usuario,
         },
       });
     } catch (error) {

@@ -7,11 +7,7 @@ import Header from "./Header";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const citas = [
-  { hora: "09:00 - 10:00", paciente: "Paciente A" },
-  { hora: "11:00 - 12:00", paciente: "Paciente B" },
-  { hora: "14:00 - 15:00", paciente: "Paciente C" },
-];
+var citas = { dia: "", horario: [] };
 
 function VistaPrevia() {
   const location = useLocation();
@@ -23,7 +19,8 @@ function VistaPrevia() {
     location.state?.token || localStorage.getItem("token")
   );
   const [user] = useState(
-    location.state?.user || JSON.parse(localStorage.getItem("user"))
+    // num_tel, id, nombre, tipo
+    JSON.parse(localStorage.getItem("user"))
   );
 
   // Verificar autenticación al cargar el componente
@@ -80,13 +77,13 @@ function VistaPrevia() {
       if (!user) return; // Validar usuario definido
 
       console.log("user", user);
-      console.log("user.tipo", user.tipo || localStorage.getItem("tipo"));
-      console.log("user.num_tel", user.numero_tel);
+      console.log("user.tipo", user.tipo);
+      console.log("user.num_tel", user.num_tel);
 
       if (user.tipo !== "R") {
         try {
           const response = await axios.get(
-            `http://localhost:3001/expedientes/vistaprevia/${user.numero_tel}`
+            `http://localhost:3001/expedientes/vistaprevia/${user.num_tel}`
           );
           if (Array.isArray(response.data.pacientes)) {
             setPacientes(response.data.pacientes);
@@ -98,6 +95,25 @@ function VistaPrevia() {
               response.data.pacientes
             );
           }
+
+          const citas_resp = await axios.get(
+            `http://localhost:3001/expedientes/horario/${user.num_tel}`
+          );
+          console.log("Citas", citas_resp.data);
+          const dia =
+            new Date().toLocaleDateString("es-MX", { weekday: "long" }) +
+            " " +
+            new Date().getDate() +
+            " de " +
+            new Date().toLocaleDateString("es-MX", { month: "long" });
+          if (Array.isArray(citas_resp.data)) {
+            citas_resp.data.sort((a, b) => {
+              const [ah, am] = a.hora.split(":").map(Number);
+              const [bh, bm] = b.hora.split(":").map(Number);
+              return ah !== bh ? ah - bh : am - bm;
+            });
+          }
+          citas = { dia: dia, horario: citas_resp.data };
         } catch (error) {
           console.error("Error fetching data:", error);
           if (error.response?.status === 401) {
@@ -110,7 +126,7 @@ function VistaPrevia() {
       } else {
         try {
           const response = await axios.get(
-            `http://localhost:3001/expedientes/usuarios/pacientes`
+            `http://localhost:3001/expedientes/citas/sinfecha/sinhora`
           );
           if (Array.isArray(response.data)) {
             setPacientes(response.data);
@@ -138,7 +154,7 @@ function VistaPrevia() {
     <div className="app-container">
       <Header
         onLogout={handleLogout}
-        num_tel={user?.numero_tel}
+        num_tel={user?.num_tel}
         token={token}
         user={user}
         tipo_usuario={user?.tipo}
@@ -147,22 +163,24 @@ function VistaPrevia() {
       <div className="main-content">
         {user?.tipo !== "R" && (
           <div className="left-section">
+            <h1> Horario </h1>
             <Horario citas={citas} />
           </div>
         )}
         <div className="center-section">
+          <h1> Pacientes Asignados </h1>
           <ListaExpedientes
             pacientes={pacientesFiltrados}
             usuario={user}
             token={token}
-            tipo_usuario={user?.tipo}
+            tipo={user?.tipo}
           />
         </div>
         <div className="right-section">
           <Filtrado
             onFilteredPatients={setPacientesFiltrados}
             pacientes={pacientes}
-            numero_tel={user?.numero_tel}
+            num_tel={user?.num_tel}
             token={token}
             tipo_usuario={user?.tipo}
           />
