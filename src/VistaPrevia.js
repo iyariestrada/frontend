@@ -95,10 +95,17 @@ function VistaPrevia() {
               response.data.pacientes
             );
           }
-          
-          const citas_resp = await axios.get(`http://localhost:3001/expedientes/horario/${user.num_tel}`);
+
+          const citas_resp = await axios.get(
+            `http://localhost:3001/expedientes/horario/${user.num_tel}`
+          );
           console.log("Citas", citas_resp.data);
-          const dia = new Date().toLocaleDateString("es-MX", { weekday: "long" }) + " " + new Date().getDate() + " de " + new Date().toLocaleDateString("es-MX", { month: "long" });
+          const dia =
+            new Date().toLocaleDateString("es-MX", { weekday: "long" }) +
+            " " +
+            new Date().getDate() +
+            " de " +
+            new Date().toLocaleDateString("es-MX", { month: "long" });
           if (Array.isArray(citas_resp.data)) {
             citas_resp.data.sort((a, b) => {
               const [ah, am] = a.hora.split(":").map(Number);
@@ -107,7 +114,6 @@ function VistaPrevia() {
             });
           }
           citas = { dia: dia, horario: citas_resp.data };
-
         } catch (error) {
           console.error("Error fetching data:", error);
           if (error.response?.status === 401) {
@@ -162,6 +168,7 @@ function VistaPrevia() {
           </div>
         )}
         <div className="center-section">
+          <h1> Pacientes Asignados </h1>
           <ListaExpedientes
             pacientes={pacientesFiltrados}
             usuario={user}

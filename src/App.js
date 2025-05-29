@@ -41,11 +41,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/admin/*" element={<Admin />} />
-        <Route path="/linea-del-tiempo" element={<LineaDelTiempo/>} />
-        <Route
-          path="/ver-horario" 
-          element={<HorarioSemanal/>}
-        />
+        <Route path="/linea-del-tiempo" element={<LineaDelTiempo />} />
+        <Route path="/ver-horario" element={<HorarioSemanal />} />
       </Routes>
     </BrowserRouter>
   );

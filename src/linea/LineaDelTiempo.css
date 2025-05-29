@@ -16,7 +16,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
   padding: 20px;
 }
@@ -60,7 +60,7 @@
 
 .timeline-container .ant-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-siguiente {
@@ -77,6 +77,17 @@
   padding: 12px 24px;
   background-color: #4f64dd;
   color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 15px;
+}
+
+.btn-interrumpido {
+  padding: 12px 24px;
+  background-color: rgb(255, 209, 0);
+  color: black;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -124,18 +135,16 @@
   flex: 1;
 }
 
-
-
 /* Responsive */
 @media (max-width: 768px) {
   .timeline-container {
     padding: 10px;
   }
-  
+
   .timeline-container .ant-timeline {
     margin: 0;
   }
-  
+
   .timeline-container .ant-btn {
     width: 100%;
     margin-bottom: 10px;

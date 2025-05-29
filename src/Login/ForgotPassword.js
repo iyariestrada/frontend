@@ -3,6 +3,15 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box, Alert } from "@mui/material";
+import { end } from "@popperjs/core";
+
+const BASE_URL = "http://localhost:3001/expedientes";
+
+const ENDPOINTS = {
+  forgotPassword: `${BASE_URL}/usuarios/forgotpass`,
+  verifyCode: `${BASE_URL}/usuarios/verifycode`,
+  resetPassword: `${BASE_URL}/usuarios/resetpass`,
+};
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -21,13 +30,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/expedientes/usuarios/forgotpass",
-        { email }
-      );
-
-      console.log("EMAIL_USER:", process.env.EMAIL_USER);
-      console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+      const response = await axios.post(ENDPOINTS.forgotPassword, { email });
 
       if (response.data.success) {
         setSuccess("Código de verificación enviado a tu correo");
@@ -46,10 +49,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/expedientes/usuarios/verifycode",
-        { email, code }
-      );
+      const response = await axios.post(ENDPOINTS.verifyCode, { email, code });
 
       if (response.data.success) {
         setSuccess("Código verificado correctamente");
@@ -91,10 +91,11 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/expedientes/usuarios/resetpass",
-        { email, code, newPassword }
-      );
+      const response = await axios.post(ENDPOINTS.resetPassword, {
+        email,
+        code,
+        newPassword,
+      });
 
       if (response.data.success) {
         setSuccess("Contraseña actualizada correctamente");

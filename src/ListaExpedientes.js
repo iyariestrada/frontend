@@ -4,7 +4,6 @@ import Paciente from "./Paciente";
 const ListaExpedientes = ({ pacientes, usuario, token, tipo }) => {
   return (
     <main className="main">
-      <h2>Pacientes Asignados</h2>
       <div className="patient-list">
         {pacientes.length > 0 ? (
           pacientes.map((paciente, index) => (

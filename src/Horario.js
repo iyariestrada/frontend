@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import "./Horario.css";
 import { useNavigate, useLocation } from "react-router-dom";
 
-
 const Horario = ({ citas }) => {
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
 
   const [token] = useState(
@@ -23,7 +22,9 @@ const Horario = ({ citas }) => {
   return (
     <div className="horario-container">
       <HorarioDia dia={citas.dia} horario={citas.horario} />
-      <button onClick={handler} className="boton-horario-completo">Ver horario completo</button>
+      <button onClick={handler} className="boton-horario-completo">
+        Ver horario completo
+      </button>
     </div>
   );
 };

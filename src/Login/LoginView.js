@@ -165,16 +165,13 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        ENDPOINTS.completeRegistration,
-        {
-          numero_tel: num_tel,
-          nombre: registerForm.name,
-          correo: registerForm.email,
-          password: registerForm.password,
-          confirmPassword: registerForm.confirmPassword,
-        }
-      );
+      const response = await axios.post(ENDPOINTS.completeRegistration, {
+        numero_tel: num_tel,
+        nombre: registerForm.name,
+        correo: registerForm.email,
+        password: registerForm.password,
+        confirmPassword: registerForm.confirmPassword,
+      });
       if (response.data.success) {
         alert("Registro exitoso. Por favor, inicia sesión.");
         setActiveTab("login");
@@ -209,13 +206,10 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
     try {
       setLoading(true);
       const num_tel = loginForm.num_tel.toString().trim();
-      const response = await axios.post(
-        ENDPOINTS.login,
-        {
-          numero_tel: num_tel,
-          password: loginForm.password,
-        }
-      );
+      const response = await axios.post(ENDPOINTS.login, {
+        numero_tel: num_tel,
+        password: loginForm.password,
+      });
 
       if (response.data.success) {
         alert("Inicio de sesión exitoso");

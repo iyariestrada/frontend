@@ -98,36 +98,34 @@ const Filtrado = ({
       );
       return {
         ...paciente,
-        estatus: estadoPaciente ? estadoPaciente.tratamiento_estado : null,
+        estatus: estadoPaciente ? estadoPaciente.estado : null,
       };
     });
 
     // Filtrar por estado
-// ...existing code...
-      if (selectedFilters.length > 0) {
-        filtered = filtered.filter((paciente) => {
-          const { estatus } = paciente;
-          return selectedFilters.some((filter) => {
-            switch (filter) {
-              case "Pendiente de asignar cita":
-                return estatus === "P";
-              case "Cita asignada":
-                return estatus === "A";
-              case "Tratamiento en proceso":
-                return estatus === "E";
-              case "Tratamiento terminado":
-                return estatus === "T";
-              case "Tratamiento interrumpido":
-                return estatus === "I";
-              case "Diagnóstico pendiente":
-                return estatus === "D";
-              default:
-                return true;
-            }
-          });
+    if (selectedFilters.length > 0) {
+      filtered = filtered.filter((paciente) => {
+        const { estatus } = paciente;
+        return selectedFilters.some((filter) => {
+          switch (filter) {
+            case "Pendiente de asignar cita":
+              return estatus === "P";
+            case "Cita asignada":
+              return estatus === "A";
+            case "Tratamiento en proceso":
+              return estatus !== "I" && estatus !== "T" && estatus !== "D";
+            case "Tratamiento terminado":
+              return estatus === "T";
+            case "Tratamiento interrumpido":
+              return estatus === "I";
+            case "Diagnóstico pendiente":
+              return estatus === "D";
+            default:
+              return true;
+          }
         });
-      }
-// ...existing code...
+      });
+    }
 
     // Filtrar por nombre
     if (nameFilter) {
