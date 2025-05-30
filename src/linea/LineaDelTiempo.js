@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 
 import { Modal } from "antd";
+import { set } from "react-hook-form";
 
 const LineaDelTiempo = () => {
   const [timelineItems, setTimelineItems] = useState([]);
@@ -28,6 +29,7 @@ const LineaDelTiempo = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
   const [EstadoPaciente, setEstadoPaciente] = useState("");
+  const [etapa, setEtapa] = useState("");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,6 +57,12 @@ const LineaDelTiempo = () => {
         getCitasByPaciente + exp_num
       );
       const citas = citasResponse.data;
+
+      const uri = getEtapaCita + exp_num;
+      const response = await axios.get(uri);
+      setEtapa(response.data);
+
+      console.log("ETAPASSSSS", response.data);
 
       const citasOrdenadas = citas.sort((a, b) => {
         if (!a.fecha && !b.fecha) return 0;
@@ -216,6 +224,12 @@ const LineaDelTiempo = () => {
       const response = await axios.get(uri);
       const etapaAnterior = response.data;
       const etapa = String.fromCharCode(etapaAnterior.charCodeAt(0) + 1);
+      await axios.post(createPrimeraCita, {
+        exp_num: exp_num,
+        numero_tel_terapeuta: num_tel,
+        tipo: etapa,
+      });
+
       navigate("/seleccionarterapeuta", {
         state: { exp_num: exp_num, tipo: etapa },
       });
@@ -336,31 +350,43 @@ useEffect(() => {
             <p>No se encontraron citas para este paciente.</p>
           </div>
         )}
-
-        <div className="botones-container">
-          <button onClick={SiguienteCitaHandler} className="btn-agendar">
-            Agendar siguiente cita
-          </button>
-          <button onClick={SiguienteEtapaHandler} className="btn-siguiente">
-            Elegir siguiente terapeuta
-          </button>
-        </div>
-
+          {
+            etapa !== "D" ? (
+              <div className="botones-container">
+                <button onClick={SiguienteCitaHandler} className="btn-agendar">
+                  Agendar siguiente cita
+                </button>
+                <button onClick={SiguienteEtapaHandler} className="btn-siguiente">
+                  Elegir siguiente terapeuta
+                </button>
+              </div>
+            ) : (
+              <div className="botones-container">
+                <span style={{ fontWeight: "bold", color: "#4a90e2", fontSize: "1.2rem" }}>
+                  Tratamiento terminado
+                </span>
+              </div>
+            )
+          }
         <div className="botones-container">
         {
-          EstadoPaciente === "I" ? (
-            <button className="btn-reanudar"
-              onClick={handleProcesoReanudado}>
-            
-              Reanudar tratamiento
-            </button>
-          ) : (
-            <button
-              onClick={handleProcesoInterrumpido}
-              className="btn-interrumpido">
-              Marcar tratamiento como interrumpido
-            </button>
-          )
+          etapa !== "D" ? (
+            EstadoPaciente === "I" ? (
+              <button
+                className="btn-reanudar"
+                onClick={handleProcesoReanudado}
+              >
+                Reanudar tratamiento
+              </button>
+            ) : (
+              <button
+                onClick={handleProcesoInterrumpido}
+                className="btn-interrumpido"
+              >
+                Marcar tratamiento como interrumpido
+              </button>
+            )
+          ) : null
         }
         </div>
 
