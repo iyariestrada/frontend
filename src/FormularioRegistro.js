@@ -4,8 +4,15 @@ import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { message } from "antd";
 
-import { QCHAT_test, SCQ_test, createPacientesTerapeutas, createExpediente, createPacienteEstado} from "./rutasApi.js";
+import {
+  QCHAT_test,
+  SCQ_test,
+  createPacientesTerapeutas,
+  createExpediente,
+  createPacienteEstado,
+} from "./rutasApi.js";
 
 const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
@@ -41,6 +48,12 @@ const CompFormularioRegistro = () => {
     const numeroTelCompleto = lada + numero_tel;
 
     try {
+      console.log("Expediente:", exp_num);
+      console.log("Nombre:", nombre);
+      console.log("Fecha de nacimiento:", formattedDate);
+      console.log("Número telefónico:", numeroTelCompleto);
+      console.log("Remitido:", remitido ? 1 : 0);
+
       await axios.post(createExpediente, {
         exp_num: exp_num,
         nombre: nombre,
@@ -54,12 +67,12 @@ const CompFormularioRegistro = () => {
         numero_tel_terapeuta: user.num_tel,
       });
 
-      await axios.post(
-        createPacienteEstado,
-        { exp_num: exp_num , estado: pasoTamizaje ? "P" : "T" } 
-      );
+      await axios.post(createPacienteEstado, {
+        exp_num: exp_num,
+        estado: pasoTamizaje ? "P" : "T",
+      });
 
-      alert("Formulario registrado");
+      message.success("Formulario registrado");
 
       if (pasoTamizaje) {
         navigate("/seleccionarterapeuta", {
@@ -74,7 +87,9 @@ const CompFormularioRegistro = () => {
       }
     } catch (error) {
       console.error("Error al registrar:", error);
-      alert("Error al registrar el formulario. Por favor, inténtalo de nuevo.");
+      message.error(
+        "Error al registrar el formulario. Por favor, inténtalo de nuevo. \nAsegurate de que el número de expediente no esté repetido."
+      );
     }
   };
 

@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-const Header = ({
-  num_tel,
-  token,
-  user,
-  tipo_usuario,
-  nombreTerapeuta,
-}) => {
+const Header = ({ num_tel, token, user, tipo_usuario, nombreTerapeuta }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -66,13 +60,14 @@ const Header = ({
         </ProfileName>
         {menuOpen && (
           <DropdownMenu>
-            <MenuItem onClick={handleVerHorario}>Ver horario</MenuItem>
+            {tipo_usuario !== "R" && (
+              <MenuItem onClick={handleVerHorario}>Ver horario</MenuItem>
+            )}
             <MenuItem onClick={handleAjustes}>Ajustes</MenuItem>
           </DropdownMenu>
         )}
       </ProfileContainer>
       <ButtonGroup>
-        {/* si es recepcionista no debe salir el boton agregar registro */}
         {tipo_usuario !== "R" && (
           <ActionButton onClick={handleAgregarRegistro}>
             Agregar Registro

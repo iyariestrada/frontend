@@ -110,6 +110,13 @@ export default function CardSettings() {
         email: updatedData.correo,
       });
 
+      const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+      currentUser.correo = userData.email;
+      currentUser.nombre = userData.fullName;
+      localStorage.setItem("user", JSON.stringify(currentUser));
+
+      window.dispatchEvent(new Event("storage")); // Forzar evento en la misma pestaña
+
       setInfoMessage({
         type: "success",
         text: "Información actualizada correctamente.",

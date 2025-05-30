@@ -30,7 +30,7 @@ const getPacienteEstadoByExpNum = pacienteEstado;
 
 //Rutas Expedientes -- Vista previa
 const expedientes = host + "expedientes/";
-// Rutas Expedientes 
+// Rutas Expedientes
 const createExpediente = expedientes;
 const updateExpediente = expedientes;
 const getExpediente = expedientes;
@@ -41,9 +41,8 @@ const getCitasTerapeutaDia = expedientes + "horario/";
 const getCitasTerapeutaDiaByDia = expedientes + "horario/";
 const getCitasTerapeutaSemana = expedientes + "horario/semana/";
 
-
 //Rutas Expedientes -- Citas
-const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora"; 
+const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora";
 const getCitasByPaciente = expedientes + "citas/paciente/";
 
 // Rutas expedientes/usuarios
@@ -51,7 +50,7 @@ const usuarios = host + "expedientes/usuarios";
 // Settings Card
 const getUsuario = (numeroTel) => `${usuarios}/${numeroTel}`;
 const updateUserData = (numeroTel) => `${usuarios}/${numeroTel}`;
-const updatePassword = (numeroTel) => `${usuarios}/updatePassword/${numeroTel}`;
+const updatePassword = (numeroTel) => `${usuarios}/changepassword/${numeroTel}`;
 // Card Table
 const updateUserPhone = (numeroTel) => `${usuarios}/updatephone/${numeroTel}`;
 const deleteUsuario = (numeroTel) => `${usuarios}/${numeroTel}`;
@@ -60,13 +59,10 @@ const getAllUsuarios = usuarios + "/all";
 const getPacientes = usuarios + "/pacientes";
 // AltaUsuarios
 const createUsuario = usuarios + "/new";
-//Tipo 
+//Tipo
 const getUsuariosByTipo = usuarios + "/" + "tipo/";
 // Ruta Expediente PacienteTerapeuta
-const createPacientesTerapeutas = host + "pacientesterapeutas";
-
-
-
+const createPacientesTerapeutas = expedientes + "pacientesterapeutas";
 
 export {
   QCHAT_test,
@@ -102,5 +98,4 @@ export {
   getExpediente,
   updateExpediente,
   getPacienteEstadoByExpNum,
-
 };
