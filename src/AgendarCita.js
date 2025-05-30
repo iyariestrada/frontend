@@ -35,40 +35,6 @@ const AgendarCita = () => {
   const token = localStorage.getItem("token");
   const tipo_usuario = user?.tipo;
 
-  console.log("AGENDAR ACTUAL USER", user);
-  /*
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const citaResponse = await axios.get(
-          ENDPOINTS.getCitaSinFecha(exp_num)
-        );
-
-        const cita = citaResponse.data[0];
-        setCitaId(cita.cita_id);
-
-        if (cita.numero_tel_terapeuta === null) {
-          const respuesta = await axios.get(
-            ENDPOINTS.getUsuariosByTipo(cita.etapa)
-          );
-          setTherapists(respuesta.data.usuarios);
-        } else if (cita.numero_tel_terapeuta) {
-          const respuesta = await axios.get(
-            ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)
-          );
-          setTherapists([respuesta.data]);
-        } else {
-          console.error("El campo numero_tel_terapeuta es undefined");
-        }
-
-        console.log("Therapists fetched:", therapists);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchPacientes();
-  }, [exp_num]);*/
-
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
@@ -83,7 +49,6 @@ const AgendarCita = () => {
           getTerapeutasDePaciente(exp_num)
         );
 
-        console.log("Paciente response:", pacienteResponse.data);
         const paciente = pacienteResponse.data;
 
         if (paciente.estado === "T" || cita.etapa === "D") {
@@ -117,7 +82,6 @@ const AgendarCita = () => {
           const response = await axios.get(
             ENDPOINTS.getCitasByTherapist(selectedTherapist)
           );
-          console.log(response.data);
           const citasDelDia = response.data.filter(
             (cita) => cita.fecha === formattedDate
           );

@@ -23,8 +23,6 @@ const SeleccionarTerapeuta = () => {
       .get(getUsuariosByTipo + tipo)
       .then((response) => setTherapists(response.data.usuarios))
       .catch((error) => console.error("Error fetching therapists:", error));
-    console.log("Therapists fetched:", therapists);
-    console.log("Tipo de usuario:", tipo);
   }, []);
 
   const handleSeleccionarTerapeuta = async (event) => {
@@ -32,7 +30,6 @@ const SeleccionarTerapeuta = () => {
     const terapeutaAsignado =
       numero_tel_terapeuta === "NA" ? null : numero_tel_terapeuta;
 
-    console.log("Terapeuta asignado:", terapeutaAsignado);
     try {
       const response = await axios.post(createPrimeraCita, {
         exp_num: exp_num,
@@ -40,7 +37,6 @@ const SeleccionarTerapeuta = () => {
         tipo: tipo,
       });
 
-      console.log("Registro exitoso:", response.data);
       navigate("/");
     } catch (error) {
       console.error(
