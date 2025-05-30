@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header.js";
 import { message } from "antd";
 
+import { getTerapeutasDePaciente } from "./rutasApi.js";
 const BASE_URL = "http://localhost:3001/expedientes";
 
 const ENDPOINTS = {
@@ -40,11 +41,21 @@ const AgendarCita = () => {
         const citaResponse = await axios.get(
           ENDPOINTS.getCitaSinFecha(exp_num)
         );
-
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
-        if (cita.numero_tel_terapeuta === null) {
+        // Obtener estado y etapa del paciente
+        const pacienteResponse = await axios.get(
+          getTerapeutasDePaciente(exp_num)
+        );
+
+        const paciente = pacienteResponse.data;
+
+        if (paciente.estado === "T" || cita.etapa === "D") {
+          // Opción 2: Todos los terapeutas que tuvieron citas con el paciente
+          const resp = await axios.get(getTerapeutasDePaciente(exp_num));
+          setTherapists(resp.data);
+        } else if (cita.numero_tel_terapeuta === null) {
           const respuesta = await axios.get(
             ENDPOINTS.getUsuariosByTipo(cita.etapa)
           );
@@ -54,8 +65,6 @@ const AgendarCita = () => {
             ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)
           );
           setTherapists([respuesta.data]);
-        } else {
-          console.error("El campo numero_tel_terapeuta es undefined");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
