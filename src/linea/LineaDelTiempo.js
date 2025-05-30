@@ -10,15 +10,13 @@ import {
   getCitasByPaciente,
   getUsuario,
   updatePacienteEstado,
-  getPacienteEstadoByExpNum
+  getPacienteEstadoByExpNum,
 } from "../rutasApi.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { Timeline } from "antd";
-import {
-  CheckSquareOutlined,
-} from "@ant-design/icons";
+import { CheckSquareOutlined } from "@ant-design/icons";
 
 import { Modal } from "antd";
 
@@ -47,13 +45,9 @@ const LineaDelTiempo = () => {
 
   const obtenerDatosCitas = async () => {
     try {
-      const pacienteResponse = await axios.get(
-        getExpediente + exp_num
-      );
+      const pacienteResponse = await axios.get(getExpediente + exp_num);
       setNombrePaciente(pacienteResponse.data.nombre);
-      const citasResponse = await axios.get(
-        getCitasByPaciente + exp_num
-      );
+      const citasResponse = await axios.get(getCitasByPaciente + exp_num);
       const citas = citasResponse.data;
 
       const citasOrdenadas = citas.sort((a, b) => {
@@ -72,10 +66,11 @@ const LineaDelTiempo = () => {
         const cita = citasOrdenadas[i];
 
         let nombreTerapeuta = "Por asignar";
+        console.log(cita.numero_tel_terapeuta);
         if (cita.numero_tel_terapeuta) {
           try {
             const terapeutaResponse = await axios.get(
-              getUsuario+cita.numero_tel_terapeuta
+              getUsuario(cita.numero_tel_terapeuta)
             );
             nombreTerapeuta = terapeutaResponse.data.nombre;
           } catch (error) {
@@ -270,7 +265,7 @@ const LineaDelTiempo = () => {
     });
   };
 
-    const handleProcesoReanudado = () => {
+  const handleProcesoReanudado = () => {
     Modal.confirm({
       title:
         "¿Estás seguro de que quieres Reanudar el proceso? Considerelo solo si el paciente puede continuar con el tratamiento.",
@@ -299,22 +294,21 @@ const LineaDelTiempo = () => {
     });
   };
 
-
   const fetchEstadoPaciente = async () => {
-  try {
-    const response = await axios.get(getPacienteEstadoByExpNum + exp_num);
-    setEstadoPaciente(response.data.estado);
-  } catch (error) {
-    console.error("Error al obtener el estado del paciente:", error);
-  }
+    try {
+      const response = await axios.get(getPacienteEstadoByExpNum + exp_num);
+      setEstadoPaciente(response.data.estado);
+    } catch (error) {
+      console.error("Error al obtener el estado del paciente:", error);
+    }
   };
 
-useEffect(() => {
-  if (exp_num) {
-    obtenerDatosCitas();
-    fetchEstadoPaciente();
-  }
-}, [exp_num]);
+  useEffect(() => {
+    if (exp_num) {
+      obtenerDatosCitas();
+      fetchEstadoPaciente();
+    }
+  }, [exp_num]);
 
   return (
     <div className="main-container">
@@ -347,11 +341,8 @@ useEffect(() => {
         </div>
 
         <div className="botones-container">
-        {
-          EstadoPaciente === "I" ? (
-            <button className="btn-reanudar"
-              onClick={handleProcesoReanudado}>
-            
+          {EstadoPaciente === "I" ? (
+            <button className="btn-reanudar" onClick={handleProcesoReanudado}>
               Reanudar tratamiento
             </button>
           ) : (
@@ -360,8 +351,7 @@ useEffect(() => {
               className="btn-interrumpido">
               Marcar tratamiento como interrumpido
             </button>
-          )
-        }
+          )}
         </div>
 
         <ObservacionesModal
