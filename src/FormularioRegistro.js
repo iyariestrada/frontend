@@ -48,11 +48,6 @@ const CompFormularioRegistro = () => {
     const numeroTelCompleto = lada + numero_tel;
 
     try {
-      console.log("Expediente:", exp_num);
-      console.log("Nombre:", nombre);
-      console.log("Fecha de nacimiento:", formattedDate);
-      console.log("Número telefónico:", numeroTelCompleto);
-      console.log("Remitido:", remitido ? 1 : 0);
 
       await axios.post(createExpediente, {
         exp_num: exp_num,
@@ -124,8 +119,6 @@ const CompFormularioRegistro = () => {
 
   const today = new Date();
   const minDate = new Date(today.setFullYear(today.getFullYear() - 18));
-
-  console.log("user.num_tel", user.num_tel);
 
   return (
     <div className="formulario-page">

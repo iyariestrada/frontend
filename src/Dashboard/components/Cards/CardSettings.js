@@ -37,7 +37,6 @@ export default function CardSettings() {
 
   const numeroTel = fromHeader ? location.state?.user?.num_tel : user.num_tel;
 
-  console.log("user in card settings", user);
 
   useEffect(() => {
     const fetchUserData = async () => {

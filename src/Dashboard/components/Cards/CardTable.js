@@ -182,7 +182,7 @@ export default function CardTable({
   const handleDeleteUser = async () => {
     if (!currentUser) return;
 
-    console.log("Eliminando usuario:", currentUser.number);
+
 
     setIsDeleting(true);
     try {

@@ -49,8 +49,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      console.log("Verificando código:", code);
-      console.log("Email:", email);
+
       const response = await axios.post(ENDPOINTS.verifyCode, { email, code });
 
       if (response.data.success) {

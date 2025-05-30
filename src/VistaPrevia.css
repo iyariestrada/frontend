@@ -44,6 +44,7 @@ body {
   flex-direction: column;
   max-height: 680px;
   overflow: auto;
+  align-items: center;
 }
 
 .left-section {

@@ -34,8 +34,6 @@ const AgendarCita = () => {
   const token = localStorage.getItem("token");
   const tipo_usuario = user?.tipo;
 
-  console.log("AGENDAR ACTUAL USER", user);
-
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
@@ -59,8 +57,6 @@ const AgendarCita = () => {
         } else {
           console.error("El campo numero_tel_terapeuta es undefined");
         }
-
-        console.log("Therapists fetched:", therapists);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -77,7 +73,7 @@ const AgendarCita = () => {
           const response = await axios.get(
             ENDPOINTS.getCitasByTherapist(selectedTherapist)
           );
-          console.log(response.data);
+
           const citasDelDia = response.data.filter(
             (cita) => cita.fecha === formattedDate
           );

@@ -11,7 +11,6 @@ const Header = ({ num_tel, token, user, tipo_usuario, nombreTerapeuta }) => {
   };
 
   const handleAjustes = () => {
-    console.log("AJUSTES DE USUARIO", user.nombreTerapeuta);
     setMenuOpen(false);
     navigate("/ajustes", {
       state: {
@@ -22,8 +21,7 @@ const Header = ({ num_tel, token, user, tipo_usuario, nombreTerapeuta }) => {
         fromHeader: true,
       },
     });
-    localStorage.setItem("user", JSON.stringify(user));
-    console.log("user", user);
+
   };
 
   const handleVerHorario = () => {
@@ -31,7 +29,6 @@ const Header = ({ num_tel, token, user, tipo_usuario, nombreTerapeuta }) => {
   };
 
   const handleAgregarRegistro = () => {
-    console.log("num_tel HEADER", num_tel);
     navigate("/agregar-registro", {
       state: {
         num_tel: num_tel,

@@ -57,7 +57,7 @@ const LineaDelTiempo = () => {
       const response = await axios.get(uri);
       setEtapa(response.data);
 
-      console.log("ETAPASSSSS", response.data);
+
 
       const citasOrdenadas = citas.sort((a, b) => {
         if (!a.fecha && !b.fecha) return 0;
@@ -75,7 +75,7 @@ const LineaDelTiempo = () => {
         const cita = citasOrdenadas[i];
 
         let nombreTerapeuta = "Por asignar";
-        console.log(cita.numero_tel_terapeuta);
+
         if (cita.numero_tel_terapeuta) {
           try {
             const terapeutaResponse = await axios.get(

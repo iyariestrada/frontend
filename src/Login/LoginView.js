@@ -229,9 +229,6 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
             tipo: response.data.user.tipo,
           })
         );
-        console.log("Usuario:", response.data.user);
-
-        console.log("Token guardado:", response.data.token);
 
         // Redirección según tipo de usuario
         if (response.data.user.tipo === "ADM") {

@@ -88,15 +88,6 @@ const EditCompFormularioRegistro = () => {
       }
     }
 
-    console.log("Datos a enviar:", {
-      exp_num_original: exp_num_original,
-      exp_num: exp_num,
-      nombre: nombre,
-      fecha_nacimiento: formattedDate,
-      numero_tel: numero_tel,
-      remitido: remitido ? 1 : 0,
-    });
-
     try {
       await axios.put(updateExpediente + exp_num_original, {
         exp_num: exp_num,
