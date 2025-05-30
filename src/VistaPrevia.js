@@ -6,7 +6,7 @@ import ListaExpedientes from "./ListaExpedientes";
 import Header from "./Header";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getTerapeutaWithPatients, getCitasTerapeutaDia, getCitasSinFechaNiHora } from "./rutasApi.js";
+import { getTerapeutaWithPatients, getCitasTerapeutaDia, getCitasSinFechaNiHora, getCitas } from "./rutasApi.js";
 
 var citas = { dia: "", horario: [] };
 
@@ -127,7 +127,7 @@ function VistaPrevia() {
       } else {
         try {
           const response = await axios.get(
-            getCitasSinFechaNiHora
+            getCitas
           );
           if (Array.isArray(response.data)) {
             setPacientes(response.data);
@@ -144,6 +144,10 @@ function VistaPrevia() {
     };
     fetchPacientes();
   }, [user, navigate]);
+
+  useEffect(() => { 
+    console.log("Pacientes Filtrados:", pacientesFiltrados);
+  }, [pacientesFiltrados]);
 
   return (
     <div className="app-container">

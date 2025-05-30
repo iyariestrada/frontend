@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { getPacienteEstadosByTerapeuta, updatePacienteEstado } from "./rutasApi";
+import { getPacienteEstadosByTerapeuta, updatePacienteEstado, getCitasSinFechaNiHora } from "./rutasApi";
 
 const Filtrado = ({
   pacientes,
@@ -18,6 +18,7 @@ const Filtrado = ({
   const [minAge, setMinAge] = useState({ years: "", months: "" });
   const [maxAge, setMaxAge] = useState({ years: "", months: "" });
   const [estadoPacientes, setEstadoPacientes] = useState([]);
+  const [pacientesSinCita, setPacientesSinCita] = useState([]); // Pacientes sin cita
 
   let URI;
 
@@ -28,21 +29,19 @@ const Filtrado = ({
   }
 
   let filters = [
-    "Pendiente de asignar cita",
-    "Cita asignada",
     "Tratamiento en proceso",
     "Tratamiento terminado",
     "Tratamiento interrumpido",
-    "Diagnóstico pendiente",
+    "Sin cita asignada", // Nuevo filtro
   ];
 
+  // Obtener estados de pacientes
   useEffect(() => {
     const getEstados = async () => {
       try {
         const response = await axios.get(URI);
         if (Array.isArray(response.data)) {
           setEstadoPacientes(response.data);
-          console.log("Estado de pacientes:", response.data);
         } else {
           console.error("La respuesta no es un array:", response.data.estados);
         }
@@ -53,6 +52,22 @@ const Filtrado = ({
 
     getEstados();
   }, [URI]);
+
+  // Obtener pacientes sin cita (sin fecha ni hora)
+  useEffect(() => {
+    const fetchPacientesSinCita = async () => {
+      try {
+        const response = await axios.get(getCitasSinFechaNiHora);
+        // Suponiendo que cada cita tiene exp_num
+        const expNumsSinCita = response.data.map((cita) => cita.exp_num);
+        setPacientesSinCita(expNumsSinCita);
+      } catch (error) {
+        console.error("Error al obtener citas sin fecha ni hora:", error);
+      }
+    };
+
+    fetchPacientesSinCita();
+  }, []);
 
   useEffect(() => {
     // Añadir el atributo estatus a cada paciente
@@ -66,15 +81,6 @@ const Filtrado = ({
     setFilteredPatients(pacientesConEstatus);
   }, [estadoPacientes, pacientes]);
 
-  const handleCheckboxChange = (selectedCategory) => {
-    if (selectedFilters.includes(selectedCategory)) {
-      let filters = selectedFilters.filter((el) => el !== selectedCategory);
-      setSelectedFilters(filters);
-    } else {
-      setSelectedFilters([selectedCategory]);
-    }
-  };
-
   useEffect(() => {
     filterAndSortPatients();
   }, [
@@ -86,6 +92,7 @@ const Filtrado = ({
     maxAge,
     pacientes,
     estadoPacientes,
+    pacientesSinCita,
   ]);
 
   const filterAndSortPatients = () => {
@@ -106,21 +113,17 @@ const Filtrado = ({
     // Filtrar por estado
     if (selectedFilters.length > 0) {
       filtered = filtered.filter((paciente) => {
-        const { estatus } = paciente;
+        const { estatus, exp_num } = paciente;
         return selectedFilters.some((filter) => {
           switch (filter) {
-            case "Pendiente de asignar cita":
-              return estatus === "P";
-            case "Cita asignada":
-              return estatus === "A";
             case "Tratamiento en proceso":
-              return estatus !== "I" && estatus !== "T" && estatus !== "D";
+              return estatus === "P";
             case "Tratamiento terminado":
               return estatus === "T";
             case "Tratamiento interrumpido":
               return estatus === "I";
-            case "Diagnóstico pendiente":
-              return estatus === "D";
+            case "Sin cita asignada":
+              return pacientesSinCita.includes(exp_num);
             default:
               return true;
           }

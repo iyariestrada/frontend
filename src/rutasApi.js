@@ -46,6 +46,7 @@ const getCitasTerapeutaSemana = expedientes + "horario/semana/";
 //Rutas Expedientes -- Citas
 const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora"; 
 const getCitasByPaciente = expedientes + "citas/paciente/";
+const getCitas = expedientes + "todas/las/citas";
 
 
 // Rutas expedientes/usuarios
@@ -65,7 +66,7 @@ const createUsuario = usuarios + "/new";
 //Tipo 
 const getUsuariosByTipo = usuarios + "/" + "tipo/";
 // Ruta Expediente PacienteTerapeuta
-const createPacientesTerapeutas = host + "pacientesterapeutas";
+const createPacientesTerapeutas = expedientes + "pacientesterapeutas";
 
 
 
@@ -104,5 +105,6 @@ export {
   getExpediente,
   updateExpediente,
   getPacienteEstadoByExpNum,
+  getCitas,
 
 };
