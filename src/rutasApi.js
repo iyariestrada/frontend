@@ -44,6 +44,7 @@ const getCitasTerapeutaSemana = expedientes + "horario/semana/";
 //Rutas Expedientes -- Citas
 const getCitasSinFechaNiHora = expedientes + "citas/sinfecha/sinhora";
 const getCitasByPaciente = expedientes + "citas/paciente/";
+const getCitas = expedientes + "todas/las/citas";
 
 // Rutas expedientes/usuarios
 const usuarios = host + "expedientes/usuarios";
@@ -98,4 +99,5 @@ export {
   getExpediente,
   updateExpediente,
   getPacienteEstadoByExpNum,
+  getCitas,
 };
