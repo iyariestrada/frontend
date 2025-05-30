@@ -10,7 +10,7 @@ const BASE_URL = "http://localhost:3001/expedientes";
 
 const ENDPOINTS = {
   getCitaSinFecha: (exp_num) => `${BASE_URL}/cita/sinfecha/sinhora/${exp_num}`,
-  getUsuarios: (etapa) => `${BASE_URL}/usuarios/${etapa}`,
+  getUsuariosByTipo: (tipo) => `${BASE_URL}/usuarios/tipo/${tipo}`,
   getUsuarioByTel: (numero_tel) => `${BASE_URL}/usuarios/${numero_tel}`,
   getCitasByTherapist: (numero_tel) => `${BASE_URL}/citas/${numero_tel}`,
   agendarCita: (citaId) => `${BASE_URL}/agendar-cita/${citaId}`,
@@ -46,9 +46,11 @@ const AgendarCita = () => {
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
-        if (cita.numero_tel_terapeuta === "NA") {
-          const respuesta = await axios.get(ENDPOINTS.getUsuarios(cita.etapa));
-          setTherapists(respuesta.data);
+        if (cita.numero_tel_terapeuta === null) {
+          const respuesta = await axios.get(
+            ENDPOINTS.getUsuariosByTipo(cita.etapa)
+          );
+          setTherapists(respuesta.data.usuarios);
         } else if (cita.numero_tel_terapeuta) {
           const respuesta = await axios.get(
             ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)

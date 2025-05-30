@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./LineaDelTiempo.css";
 import Header from "../Header.js";
 import ObservacionesModal from "./ObservacionesModal.js";
+import { message } from "antd";
 import {
   getEtapaCita,
   createPrimeraCita,
@@ -10,15 +11,13 @@ import {
   getCitasByPaciente,
   getUsuario,
   updatePacienteEstado,
-  getPacienteEstadoByExpNum
+  getPacienteEstadoByExpNum,
 } from "../rutasApi.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { Timeline } from "antd";
-import {
-  CheckSquareOutlined,
-} from "@ant-design/icons";
+import { CheckSquareOutlined } from "@ant-design/icons";
 
 import { Modal } from "antd";
 import { set } from "react-hook-form";
@@ -49,13 +48,9 @@ const LineaDelTiempo = () => {
 
   const obtenerDatosCitas = async () => {
     try {
-      const pacienteResponse = await axios.get(
-        getExpediente + exp_num
-      );
+      const pacienteResponse = await axios.get(getExpediente + exp_num);
       setNombrePaciente(pacienteResponse.data.nombre);
-      const citasResponse = await axios.get(
-        getCitasByPaciente + exp_num
-      );
+      const citasResponse = await axios.get(getCitasByPaciente + exp_num);
       const citas = citasResponse.data;
 
       const uri = getEtapaCita + exp_num;
@@ -80,10 +75,11 @@ const LineaDelTiempo = () => {
         const cita = citasOrdenadas[i];
 
         let nombreTerapeuta = "Por asignar";
+        console.log(cita.numero_tel_terapeuta);
         if (cita.numero_tel_terapeuta) {
           try {
             const terapeutaResponse = await axios.get(
-              getUsuario+cita.numero_tel_terapeuta
+              getUsuario(cita.numero_tel_terapeuta)
             );
             nombreTerapeuta = terapeutaResponse.data.nombre;
           } catch (error) {
@@ -210,9 +206,9 @@ const LineaDelTiempo = () => {
     } catch (error) {
       // Si el backend responde con un error personalizado
       if (error.response && error.response.data && error.response.data.error) {
-        alert("Error al asignar la cita: " + error.response.data.error);
+        message.error("Error al asignar la cita: " + error.response.data.error);
       } else {
-        alert("Error al asignar la cita: " + error.message);
+        message.error("Error al asignar la cita: " + error.message);
       }
     }
   };
@@ -235,25 +231,12 @@ const LineaDelTiempo = () => {
       });
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        alert("Error al asignar la cita: " + error.response.data.error);
+        message.error("Error al asignar la cita: " + error.response.data.error);
       } else {
-        alert("Error al asignar la cita: " + error.message);
+        message.error("Error al asignar la cita: " + error.message);
       }
     }
   };
-
-  /*const handleProcesoInterrumpido = () => {
-    Modal.confirm({
-      title:
-        "¿Estás seguro de que quieres interrumpir el proceso? Considera realizar esto solo si el paciente no puede continuar con el tratamiento.",
-      okText: "Sí, interrumpir",
-      okType: "danger",
-      cancelText: "Cancelar",
-      onOk() {
-        navigate("/");
-      },
-    });
-  };*/
 
   const handleProcesoInterrumpido = () => {
     Modal.confirm({
@@ -284,11 +267,11 @@ const LineaDelTiempo = () => {
     });
   };
 
-    const handleProcesoReanudado = () => {
+  const handleProcesoReanudado = () => {
     Modal.confirm({
       title:
         "¿Estás seguro de que quieres Reanudar el proceso? Considerelo solo si el paciente puede continuar con el tratamiento.",
-      okText: "Sí, Reaunadar",
+      okText: "Sí, Reanuadar",
       okType: "danger",
       cancelText: "Cancelar",
       async onOk() {
@@ -313,22 +296,21 @@ const LineaDelTiempo = () => {
     });
   };
 
-
   const fetchEstadoPaciente = async () => {
-  try {
-    const response = await axios.get(getPacienteEstadoByExpNum + exp_num);
-    setEstadoPaciente(response.data.estado);
-  } catch (error) {
-    console.error("Error al obtener el estado del paciente:", error);
-  }
+    try {
+      const response = await axios.get(getPacienteEstadoByExpNum + exp_num);
+      setEstadoPaciente(response.data.estado);
+    } catch (error) {
+      console.error("Error al obtener el estado del paciente:", error);
+    }
   };
 
-useEffect(() => {
-  if (exp_num) {
-    obtenerDatosCitas();
-    fetchEstadoPaciente();
-  }
-}, [exp_num]);
+  useEffect(() => {
+    if (exp_num) {
+      obtenerDatosCitas();
+      fetchEstadoPaciente();
+    }
+  }, [exp_num]);
 
   return (
     <div className="main-container">
@@ -369,6 +351,7 @@ useEffect(() => {
             )
           }
         <div className="botones-container">
+
         {
           etapa !== "D" ? (
             EstadoPaciente === "I" ? (
