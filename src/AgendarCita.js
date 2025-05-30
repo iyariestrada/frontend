@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import logo from "./public/LogoOficial_HIC_horizontal.png"; // Ajusta la ruta del logo según tu proyecto
 import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate, useLocation } from "react-router-dom";
+import Header from "./Header.js";
+import { message } from "antd";
 
 const BASE_URL = "http://localhost:3001/expedientes";
 
@@ -27,10 +28,11 @@ const AgendarCita = () => {
   const navigate = useNavigate();
 
   const exp_num = location.state?.exp_num;
-  const numero_tel = location.state?.numero_tel; // USUARIO ACTUAL
-  const token = location.state?.token;
-  const user = location.state?.user;
-  const tipo_usuario = location.state?.tipo_usuario;
+
+  const [user] = useState(() => JSON.parse(localStorage.getItem("user")) || {});
+  const numero_tel = user?.num_tel;
+  const token = localStorage.getItem("token");
+  const tipo_usuario = user?.tipo;
 
   console.log("AGENDAR ACTUAL USER", user);
 
@@ -39,22 +41,17 @@ const AgendarCita = () => {
       try {
         const citaResponse = await axios.get(
           ENDPOINTS.getCitaSinFecha(exp_num)
-          //`http://localhost:3001/expedientes/cita/sinfecha/sinhora/${exp_num}`
         );
 
         const cita = citaResponse.data[0];
         setCitaId(cita.cita_id);
 
         if (cita.numero_tel_terapeuta === "NA") {
-          const respuesta = await axios.get(
-            ENDPOINTS.getUsuarios(cita.etapa)
-            //"http://localhost:3001/expedientes/usuarios/" + cita.etapa
-          );
+          const respuesta = await axios.get(ENDPOINTS.getUsuarios(cita.etapa));
           setTherapists(respuesta.data);
         } else if (cita.numero_tel_terapeuta) {
           const respuesta = await axios.get(
             ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)
-            //`http://localhost:3001/expedientes/usuarios/${cita.numero_tel_terapeuta}`
           );
           setTherapists([respuesta.data]);
         } else {
@@ -77,7 +74,6 @@ const AgendarCita = () => {
         try {
           const response = await axios.get(
             ENDPOINTS.getCitasByTherapist(selectedTherapist)
-            //`http://localhost:3001/expedientes/citas/${selectedTherapist}`
           );
           console.log(response.data);
           const citasDelDia = response.data.filter(
@@ -112,14 +108,14 @@ const AgendarCita = () => {
     event.preventDefault();
 
     if (!selectedTherapist || !date || !selectedTime) {
-      alert("Por favor completa todos los campos.");
+      message.error("Por favor completa todos los campos.");
       return;
     }
 
     const formattedDate = date.toISOString().split("T")[0];
 
     if (!citaId) {
-      alert("Error: ID de la cita no encontrado.");
+      message.error("Error: ID de la cita no encontrado.");
       return;
     }
 
@@ -131,12 +127,8 @@ const AgendarCita = () => {
     };
 
     try {
-      await axios.put(
-        ENDPOINTS.agendarCita(citaId),
-        //`http://localhost:3001/expedientes/agendar-cita/${citaId}`,
-        payload
-      );
-      alert("Cita agendada con éxito.");
+      await axios.put(ENDPOINTS.agendarCita(citaId), payload);
+      message.success("Cita agendada con éxito.");
 
       navigate("/", {
         state: {
@@ -148,7 +140,7 @@ const AgendarCita = () => {
       });
     } catch (error) {
       console.error("Error agendando la cita:", error);
-      alert("Hubo un problema al agendar la cita. Intenta nuevamente.");
+      message.error("Hubo un problema al agendar la cita. Intenta nuevamente.");
     }
   };
 
@@ -157,12 +149,13 @@ const AgendarCita = () => {
 
   return (
     <div>
-      <Header>
-        <LogoContainer>
-          <Logo src={logo} alt="Hospital Logo" />
-        </LogoContainer>
-        <LogoutButton>Cerrar Sesión</LogoutButton>
-      </Header>
+      <Header
+        num_tel={numero_tel}
+        token={token}
+        user={user}
+        tipo_usuario={tipo_usuario}
+        nombreTerapeuta={user?.nombre}
+      />
       <AppointmentContainer>
         <h1>Agendar Cita</h1>
         <FormGroup>
@@ -209,7 +202,7 @@ const AgendarCita = () => {
 export default AgendarCita;
 
 // Estilos CSS con styled-components
-const Header = styled.div`
+/*const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -237,7 +230,7 @@ const LogoutButton = styled.button`
   &:hover {
     background-color: rgba(255, 0, 0, 0.2);
   }
-`;
+`;*/
 
 const AppointmentContainer = styled.div`
   max-width: 600px;

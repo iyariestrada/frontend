@@ -19,11 +19,18 @@ function VistaPrevia() {
   const [token] = useState(
     location.state?.token || localStorage.getItem("token")
   );
-  const [user] = useState(
-    // num_tel, id, nombre, tipo
-    JSON.parse(localStorage.getItem("user"))
-  );
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "user") {
+        const updatedUser = JSON.parse(event.newValue);
+        setUser(updatedUser);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
   // Verificar autenticación al cargar el componente
   useEffect(() => {
     if (!token || !user) {
@@ -156,7 +163,7 @@ function VistaPrevia() {
         token={token}
         user={user}
         tipo_usuario={user?.tipo}
-        nombreTerapeuta={nombreTerapeuta || user?.nombre}
+        nombreTerapeuta={user?.nombre}
       />
       <div className="main-content">
         {user?.tipo !== "R" && (
