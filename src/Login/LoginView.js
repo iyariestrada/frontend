@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { Link } from "react-router-dom";
+import { message } from "antd";
 
 const API_BASE = "http://localhost:3001/expedientes";
 
@@ -42,7 +43,7 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (registerForm.num_tel.length === 10) {
+    if (registerForm.num_tel.length >= 10) {
       verifyPhoneNumber();
     } else {
       setPhoneValid(null);
@@ -173,7 +174,7 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
         confirmPassword: registerForm.confirmPassword,
       });
       if (response.data.success) {
-        alert("Registro exitoso. Por favor, inicia sesión.");
+        message.success("Registro exitoso. Por favor, inicia sesión.");
         setActiveTab("login");
         setRegisterForm({
           name: "",
@@ -212,7 +213,7 @@ const LoginView = ({ onLogin, showForgotPassword = true }) => {
       });
 
       if (response.data.success) {
-        alert("Inicio de sesión exitoso");
+        message.success("Inicio de sesión exitoso");
 
         onLogin && onLogin(response.data.user);
 

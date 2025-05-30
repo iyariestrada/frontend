@@ -49,6 +49,8 @@ const ForgotPassword = () => {
     setError("");
 
     try {
+      console.log("Verificando código:", code);
+      console.log("Email:", email);
       const response = await axios.post(ENDPOINTS.verifyCode, { email, code });
 
       if (response.data.success) {
@@ -111,7 +113,17 @@ const ForgotPassword = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", mt: 4, p: 3 }}>
+    <Box
+      sx={{
+        maxWidth: 400,
+        mx: "auto",
+        mt: 4,
+        p: 3,
+        backgroundColor: "rgba(255,255,255,0.7)",
+        backdropFilter: "blur(10px)",
+        borderRadius: 3,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}>
       <Typography variant="h5" gutterBottom>
         Recuperar Contraseña
       </Typography>

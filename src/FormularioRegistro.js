@@ -4,8 +4,8 @@ import DatePickerComponent from "./DatePickerComponent";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+
 import { QCHAT_test, SCQ_test, createPacientesTerapeutas, createExpediente, createPacienteEstado} from "./rutasApi.js";
-// import { QCHAT_test, SCQ_test } from "./rutasApi.js";  
 
 const CompFormularioRegistro = () => {
   const [patientBirthdate, setPatientBirthdate] = useState("");
@@ -26,9 +26,7 @@ const CompFormularioRegistro = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [token] = useState(
-    localStorage.getItem("token")
-  );
+  const [token] = useState(localStorage.getItem("token"));
   const [user] = useState(
     // user.num_tel, id, nombre, tipo
     JSON.parse(localStorage.getItem("user"))
@@ -61,7 +59,6 @@ const CompFormularioRegistro = () => {
         { exp_num: exp_num , estado: pasoTamizaje ? "P" : "T" } 
       );
 
-      
       alert("Formulario registrado");
 
       if (pasoTamizaje) {
