@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./LineaDelTiempo.css";
 import Header from "../Header.js";
 import ObservacionesModal from "./ObservacionesModal.js";
+import { message } from "antd";
 import {
   getEtapaCita,
   createPrimeraCita,
@@ -197,9 +198,9 @@ const LineaDelTiempo = () => {
     } catch (error) {
       // Si el backend responde con un error personalizado
       if (error.response && error.response.data && error.response.data.error) {
-        alert("Error al asignar la cita: " + error.response.data.error);
+        message.error("Error al asignar la cita: " + error.response.data.error);
       } else {
-        alert("Error al asignar la cita: " + error.message);
+        message.error("Error al asignar la cita: " + error.message);
       }
     }
   };
@@ -216,25 +217,12 @@ const LineaDelTiempo = () => {
       });
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        alert("Error al asignar la cita: " + error.response.data.error);
+        message.error("Error al asignar la cita: " + error.response.data.error);
       } else {
-        alert("Error al asignar la cita: " + error.message);
+        message.error("Error al asignar la cita: " + error.message);
       }
     }
   };
-
-  /*const handleProcesoInterrumpido = () => {
-    Modal.confirm({
-      title:
-        "¿Estás seguro de que quieres interrumpir el proceso? Considera realizar esto solo si el paciente no puede continuar con el tratamiento.",
-      okText: "Sí, interrumpir",
-      okType: "danger",
-      cancelText: "Cancelar",
-      onOk() {
-        navigate("/");
-      },
-    });
-  };*/
 
   const handleProcesoInterrumpido = () => {
     Modal.confirm({
@@ -269,7 +257,7 @@ const LineaDelTiempo = () => {
     Modal.confirm({
       title:
         "¿Estás seguro de que quieres Reanudar el proceso? Considerelo solo si el paciente puede continuar con el tratamiento.",
-      okText: "Sí, Reaunadar",
+      okText: "Sí, Reanuadar",
       okType: "danger",
       cancelText: "Cancelar",
       async onOk() {

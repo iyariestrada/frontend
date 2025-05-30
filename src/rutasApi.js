@@ -26,7 +26,7 @@ const updatePacienteEstado = pacienteEstado;
 const deletePacienteEstado = pacienteEstado;
 const getPacienteEstadosByTerapeuta = pacienteEstado + "terapeuta/";
 const getAllPacienteEstados = pacienteEstado;
-const getPacienteEstadoByExpNum = pacienteEstado;
+const getPacienteEstadoByExpNum = (exp_num) => `${pacienteEstado}${exp_num}`;
 
 //Rutas Expedientes -- Vista previa
 const expedientes = host + "expedientes/";
