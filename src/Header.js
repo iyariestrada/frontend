@@ -48,7 +48,7 @@ const Header = ({ num_tel, token, user, tipo_usuario, nombreTerapeuta }) => {
   return (
     <HeaderContainer>
       <InstitutionLogo
-        src="./LogoOficial_HIC_Horizontal.png"
+        src="/LogoOficial_HIC_Horizontal.png"
         alt="Institución"
       />
       <ProfileContainer>
