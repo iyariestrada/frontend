@@ -35,6 +35,8 @@ const createExpediente = expedientes;
 const updateExpediente = expedientes;
 const getExpediente = expedientes;
 const getTerapeutaWithPatients = expedientes + "vistaprevia/";
+const getTerapeutasDePaciente = (exp_num) =>
+  `${expedientes}terapeutas-paciente/${exp_num}`;
 
 //Rutas Expedientes -- Horario
 const getCitasTerapeutaDia = expedientes + "horario/";
@@ -100,4 +102,5 @@ export {
   updateExpediente,
   getPacienteEstadoByExpNum,
   getCitas,
+  getTerapeutasDePaciente,
 };

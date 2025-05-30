@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Header from "./Header.js";
 import { message } from "antd";
 
+import { getTerapeutasDePaciente } from "./rutasApi.js";
 const BASE_URL = "http://localhost:3001/expedientes";
 
 const ENDPOINTS = {
@@ -35,7 +36,7 @@ const AgendarCita = () => {
   const tipo_usuario = user?.tipo;
 
   console.log("AGENDAR ACTUAL USER", user);
-
+  /*
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
@@ -61,6 +62,45 @@ const AgendarCita = () => {
         }
 
         console.log("Therapists fetched:", therapists);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchPacientes();
+  }, [exp_num]);*/
+
+  useEffect(() => {
+    const fetchPacientes = async () => {
+      try {
+        const citaResponse = await axios.get(
+          ENDPOINTS.getCitaSinFecha(exp_num)
+        );
+        const cita = citaResponse.data[0];
+        setCitaId(cita.cita_id);
+
+        // Obtener estado y etapa del paciente
+        const pacienteResponse = await axios.get(
+          getTerapeutasDePaciente(exp_num)
+        );
+
+        console.log("Paciente response:", pacienteResponse.data);
+        const paciente = pacienteResponse.data;
+
+        if (paciente.estado === "T" || cita.etapa === "D") {
+          // Opción 2: Todos los terapeutas que tuvieron citas con el paciente
+          const resp = await axios.get(getTerapeutasDePaciente(exp_num));
+          setTherapists(resp.data);
+        } else if (cita.numero_tel_terapeuta === null) {
+          const respuesta = await axios.get(
+            ENDPOINTS.getUsuariosByTipo(cita.etapa)
+          );
+          setTherapists(respuesta.data.usuarios);
+        } else if (cita.numero_tel_terapeuta) {
+          const respuesta = await axios.get(
+            ENDPOINTS.getUsuarioByTel(cita.numero_tel_terapeuta)
+          );
+          setTherapists([respuesta.data]);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
